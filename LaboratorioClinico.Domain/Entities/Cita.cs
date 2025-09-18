@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LaboratorioClinico.Domain.Entities
+{
+    [Table("t_cita")]
+    public class Cita
+    {
+        [Key]
+        [Column("idcita")]
+        public int Id { get; set; }
+
+        [Required]
+        [Column("fechahora")]
+        public DateTime FechaHora { get; set; }
+
+        [Required, StringLength(200)]
+        [Column("motivo")]
+        public string Motivo { get; set; }
+
+        [Required]
+        [Column("estado")]
+        public bool Estado { get; set; }
+
+        [StringLength(300)]
+        [Column("notasconsulta")]
+        public string NotasConsulta { get; set; }
+
+        [Column("idpaciente")]
+        [ForeignKey("Paciente")]
+        public int IdPaciente { get; set; }
+
+        [Column("iddoctor")]
+        [ForeignKey("Doctor")]
+        public int IdDoctor { get; set; }
+    }
+}
+
