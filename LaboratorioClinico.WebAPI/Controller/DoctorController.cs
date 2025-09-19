@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LaboratorioClinico.Domain.Entities;
+using LaboratorioClinico.Infrastructure.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,11 +11,18 @@ namespace LaboratorioClinico.WebAPI.Controller
     [ApiController]
     public class DoctorController : ControllerBase
     {
-        // GET: api/<DoctorController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly AppDBContext _context;
+
+        public DoctorController(AppDBContext context)
         {
-            return new string[] { "value1", "value2" };
+            _context = context;
+        }
+
+        // GET: api/Doctor/get
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Doctor>>> Get()
+        {
+            return await _context.Doctores.ToListAsync();
         }
 
         // GET api/<DoctorController>/5
