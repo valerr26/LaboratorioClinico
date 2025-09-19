@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24 d17.14
+VisualStudioVersion = 17.14.36310.24
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaboratorioClinico.Application", "LaboratorioClinico.Application\LaboratorioClinico.Application.csproj", "{31AF6722-6C2C-42AC-B50D-BC0E2B0EEDC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.Application", "LaboratorioClinico.Application\LaboratorioClinico.Application.csproj", "{31AF6722-6C2C-42AC-B50D-BC0E2B0EEDC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaboratorioClinico.Domain", "LaboratorioClinico.Domain\LaboratorioClinico.Domain.csproj", "{19F96F9C-6CCF-4BBB-BCB1-475908D26E99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.Domain", "LaboratorioClinico.Domain\LaboratorioClinico.Domain.csproj", "{19F96F9C-6CCF-4BBB-BCB1-475908D26E99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaboratorioClinico.Infrastucture", "LaboratorioClinico.Infrastucture\LaboratorioClinico.Infrastucture.csproj", "{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.Infrastucture", "LaboratorioClinico.Infrastucture\LaboratorioClinico.Infrastucture.csproj", "{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaboratorioClinico.WebAPI", "LaboratorioClinico.WebAPI\LaboratorioClinico.WebAPI.csproj", "{47AB3C63-A385-44BC-BB6C-2FC0B9CD1B2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47AB3C63-A385-44BC-BB6C-2FC0B9CD1B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47AB3C63-A385-44BC-BB6C-2FC0B9CD1B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47AB3C63-A385-44BC-BB6C-2FC0B9CD1B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47AB3C63-A385-44BC-BB6C-2FC0B9CD1B2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
