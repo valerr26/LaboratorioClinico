@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.Domain",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.Infrastucture", "LaboratorioClinico.Infrastucture\LaboratorioClinico.Infrastucture.csproj", "{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaboratorioClinico.WebAPI", "LaboratorioClinico.WebAPI\LaboratorioClinico.WebAPI.csproj", "{FE059D24-0E08-4875-8822-E2A233959F7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD64F3DC-B282-4BA0-A7CF-77A677E706A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE059D24-0E08-4875-8822-E2A233959F7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE059D24-0E08-4875-8822-E2A233959F7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE059D24-0E08-4875-8822-E2A233959F7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE059D24-0E08-4875-8822-E2A233959F7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
