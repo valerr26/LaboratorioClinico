@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LaboratorioClinico.Application\LaboratorioClinico.Application.csproj" />
-    <ProjectReference Include="..\LaboratorioClinico.Infrastucture\LaboratorioClinico.Infrastucture.csproj" />
+    <ProjectReference Include="..\LaboratorioClinico.Infrastucture\LaboratorioClinico.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

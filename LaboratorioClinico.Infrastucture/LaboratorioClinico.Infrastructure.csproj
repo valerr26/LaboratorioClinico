@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LaboratorioClinico.Application\LaboratorioClinico.Application.csproj" />
     <ProjectReference Include="..\LaboratorioClinico.Domain\LaboratorioClinico.Domain.csproj" />
   </ItemGroup>
 

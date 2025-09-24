@@ -23,13 +23,13 @@ namespace LaboratorioClinico.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Usuario>().ToTable("t_Usuario");
-            modelBuilder.Entity<Rol>().ToTable("t_Rol");
-            modelBuilder.Entity<Paciente>().ToTable("t_Paciente");
-            modelBuilder.Entity<Doctor>().ToTable("t_Doctor");
-            modelBuilder.Entity<Cita>().ToTable("t_Cita");
-            modelBuilder.Entity<Examen>().ToTable("t_Examen");
-            modelBuilder.Entity<Resultado>().ToTable("t_Resultado");
+            modelBuilder.Entity<Usuario>().ToTable("t_usuario");
+            modelBuilder.Entity<Rol>().ToTable("t_rol");
+            modelBuilder.Entity<Paciente>().ToTable("t_paciente");
+            modelBuilder.Entity<Doctor>().ToTable("t_doctor");
+            modelBuilder.Entity<Cita>().ToTable("t_cita");
+            modelBuilder.Entity<Examen>().ToTable("t_examen");
+            modelBuilder.Entity<Resultado>().ToTable("t_resultado");
 
             base.OnModelCreating(modelBuilder);
         }
