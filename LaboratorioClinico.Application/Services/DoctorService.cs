@@ -17,22 +17,24 @@ namespace LaboratorioClinico.Application.Services
             _repository = repository;
         }
 
-        // Obtener todos los doctores
-        public async Task<IEnumerable<Doctor>> ObtenerDoctoresAsync()
+        // Obtener doctores activos
+        public async Task<IEnumerable<Doctor>> ObtenerDoctoresActivosAsync()
         {
-            return await _repository.GetDoctoresAsync();
+            var doctores = await _repository.GetDoctoresAsync();
+            return doctores.Where(d => d.Estado);
         }
 
-        // Obtener doctor por Id
+        // Obtener doctor por Id (si está activo)
         public async Task<Doctor?> ObtenerDoctorPorIdAsync(int id)
         {
             if (id <= 0)
                 return null;
 
-            return await _repository.GetDoctorByIdAsync(id);
+            var doctor = await _repository.GetDoctorByIdAsync(id);
+            return (doctor != null && doctor.Estado) ? doctor : null;
         }
 
-        // Agregar un doctor
+        // Agregar doctor
         public async Task<string> AgregarDoctorAsync(Doctor nuevoDoctor)
         {
             try
@@ -43,6 +45,7 @@ namespace LaboratorioClinico.Application.Services
                 if (string.IsNullOrWhiteSpace(nuevoDoctor.LicenciaMedica))
                     return "Error: La licencia médica es obligatoria";
 
+                nuevoDoctor.Estado = true; // Activo por defecto
                 var doctorInsertado = await _repository.AddDoctorAsync(nuevoDoctor);
 
                 if (doctorInsertado == null || doctorInsertado.Id <= 0)
@@ -56,7 +59,7 @@ namespace LaboratorioClinico.Application.Services
             }
         }
 
-        // Modificar un doctor
+        // Modificar doctor
         public async Task<string> ModificarDoctorAsync(Doctor doctor)
         {
             if (doctor.Id <= 0)
@@ -73,20 +76,24 @@ namespace LaboratorioClinico.Application.Services
             existente.Email = doctor.Email;
             existente.LicenciaMedica = doctor.LicenciaMedica;
             existente.IdUsuario = doctor.IdUsuario;
+            existente.Estado = doctor.Estado;
 
             var actualizado = await _repository.UpdateDoctorAsync(existente);
 
-            if (actualizado == null)
-                return "Error: No se pudo actualizar el doctor";
-
-            return "Doctor modificado correctamente";
+            return actualizado != null ? "Doctor modificado correctamente" : "Error: No se pudo actualizar el doctor";
         }
 
-        // Eliminar un doctor
+        // Eliminar doctor (borrado lógico)
         public async Task<string> EliminarDoctorAsync(int id)
         {
-            var resultado = await _repository.DeleteDoctorAsync(id);
-            return resultado ? "Doctor eliminado correctamente" : "Error: No se encontró el doctor";
+            var doctor = await _repository.GetDoctorByIdAsync(id);
+            if (doctor == null || !doctor.Estado)
+                return "Error: Doctor no encontrado";
+
+            doctor.Estado = false;
+            await _repository.UpdateDoctorAsync(doctor);
+
+            return "Doctor eliminado correctamente";
         }
     }
 }

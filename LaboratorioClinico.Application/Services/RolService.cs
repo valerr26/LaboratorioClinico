@@ -17,28 +17,36 @@ namespace LaboratorioClinico.Application.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Rol>> ObtenerRolesAsync()
+        // Obtener roles activos
+        public async Task<IEnumerable<Rol>> ObtenerRolesActivosAsync()
         {
-            return await _repository.GetRolesAsync();
+            var roles = await _repository.GetRolesAsync();
+            return roles.Where(r => r.Estado);
         }
 
+        // Obtener rol por Id (si está activo)
         public async Task<Rol?> ObtenerRolPorIdAsync(int id)
         {
             if (id <= 0)
                 return null;
 
-            return await _repository.GetRolByIdAsync(id);
+            var rol = await _repository.GetRolByIdAsync(id);
+            return (rol != null && rol.Estado) ? rol : null;
         }
 
-        public async Task<string> AgregarRolAsync(Rol rol)
+        // Agregar rol
+        public async Task<string> AgregarRolAsync(Rol nuevoRol)
         {
-            if (string.IsNullOrWhiteSpace(rol.Nombre))
+            if (string.IsNullOrWhiteSpace(nuevoRol.Nombre))
                 return "Error: El nombre del rol es obligatorio";
 
-            var rolInsertado = await _repository.AddRolAsync(rol);
+            nuevoRol.Estado = true; // Activo por defecto
+            var rolInsertado = await _repository.AddRolAsync(nuevoRol);
+
             return rolInsertado != null ? "Rol agregado correctamente" : "Error: No se pudo agregar el rol";
         }
 
+        // Modificar rol
         public async Task<string> ModificarRolAsync(Rol rol)
         {
             if (rol.Id <= 0)
@@ -50,15 +58,24 @@ namespace LaboratorioClinico.Application.Services
 
             existente.Nombre = rol.Nombre;
             existente.Descripcion = rol.Descripcion;
+            existente.Estado = rol.Estado;
 
             var actualizado = await _repository.UpdateRolAsync(existente);
-            return actualizado != null ? "Rol modificado correctamente" : "Error: No se pudo modificar el rol";
+
+            return actualizado != null ? "Rol modificado correctamente" : "Error: No se pudo actualizar el rol";
         }
 
+        // Eliminar rol (borrado lógico)
         public async Task<string> EliminarRolAsync(int id)
         {
-            var resultado = await _repository.DeleteRolAsync(id);
-            return resultado ? "Rol eliminado correctamente" : "Error: No se encontró el rol";
+            var rol = await _repository.GetRolByIdAsync(id);
+            if (rol == null || !rol.Estado)
+                return "Error: Rol no encontrado";
+
+            rol.Estado = false;
+            await _repository.UpdateRolAsync(rol);
+
+            return "Rol eliminado correctamente";
         }
     }
 }

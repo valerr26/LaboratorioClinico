@@ -26,5 +26,9 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("idrol")]
         [ForeignKey("Rol")]
         public int IdRol { get; set; }
+
+        [Required]
+        [Column("estado")]
+        public bool Estado { get; set; }
     }
 }

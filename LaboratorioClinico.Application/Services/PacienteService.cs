@@ -17,28 +17,49 @@ namespace LaboratorioClinico.Application.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Paciente>> ObtenerPacientesAsync()
+        // Obtener pacientes activos
+        public async Task<IEnumerable<Paciente>> ObtenerPacientesActivosAsync()
         {
-            return await _repository.GetPacientesAsync();
+            var pacientes = await _repository.GetPacientesAsync();
+            return pacientes.Where(p => p.Estado);
         }
 
+        // Obtener paciente por Id (si está activo)
         public async Task<Paciente?> ObtenerPacientePorIdAsync(int id)
         {
             if (id <= 0)
                 return null;
 
-            return await _repository.GetPacienteByIdAsync(id);
+            var paciente = await _repository.GetPacienteByIdAsync(id);
+            return (paciente != null && paciente.Estado) ? paciente : null;
         }
 
-        public async Task<string> AgregarPacienteAsync(Paciente paciente)
+        // Agregar paciente
+        public async Task<string> AgregarPacienteAsync(Paciente nuevoPaciente)
         {
-            if (string.IsNullOrWhiteSpace(paciente.Nombre) || string.IsNullOrWhiteSpace(paciente.Apellido))
-                return "Error: Nombre y apellido son obligatorios";
+            try
+            {
+                if (string.IsNullOrWhiteSpace(nuevoPaciente.Nombre) || string.IsNullOrWhiteSpace(nuevoPaciente.Apellido))
+                    return "Error: El nombre y apellido son obligatorios";
 
-            var pacienteInsertado = await _repository.AddPacienteAsync(paciente);
-            return pacienteInsertado != null ? "Paciente agregado correctamente" : "Error: No se pudo agregar el paciente";
+                if (string.IsNullOrWhiteSpace(nuevoPaciente.Direccion))
+                    return "Error: La dirección es obligatoria";
+
+                nuevoPaciente.Estado = true; // Activo por defecto
+                var pacienteInsertado = await _repository.AddPacienteAsync(nuevoPaciente);
+
+                if (pacienteInsertado == null || pacienteInsertado.Id <= 0)
+                    return "Error: No se pudo registrar el paciente";
+
+                return "Paciente agregado correctamente";
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}";
+            }
         }
 
+        // Modificar paciente
         public async Task<string> ModificarPacienteAsync(Paciente paciente)
         {
             if (paciente.Id <= 0)
@@ -50,20 +71,29 @@ namespace LaboratorioClinico.Application.Services
 
             existente.Nombre = paciente.Nombre;
             existente.Apellido = paciente.Apellido;
-            existente.FechaNacimiento = paciente.FechaNacimiento;
+            existente.Direccion = paciente.Direccion;
             existente.Telefono = paciente.Telefono;
             existente.Email = paciente.Email;
-            existente.Direccion = paciente.Direccion;
+            existente.FechaNacimiento = paciente.FechaNacimiento;
             existente.IdUsuario = paciente.IdUsuario;
+            existente.Estado = paciente.Estado;
 
             var actualizado = await _repository.UpdatePacienteAsync(existente);
-            return actualizado != null ? "Paciente modificado correctamente" : "Error: No se pudo modificar el paciente";
+
+            return actualizado != null ? "Paciente modificado correctamente" : "Error: No se pudo actualizar el paciente";
         }
 
+        // Eliminar paciente (borrado lógico)
         public async Task<string> EliminarPacienteAsync(int id)
         {
-            var resultado = await _repository.DeletePacienteAsync(id);
-            return resultado ? "Paciente eliminado correctamente" : "Error: No se encontró el paciente";
+            var paciente = await _repository.GetPacienteByIdAsync(id);
+            if (paciente == null || !paciente.Estado)
+                return "Error: Paciente no encontrado";
+
+            paciente.Estado = false;
+            await _repository.UpdatePacienteAsync(paciente);
+
+            return "Paciente eliminado correctamente";
         }
     }
 }

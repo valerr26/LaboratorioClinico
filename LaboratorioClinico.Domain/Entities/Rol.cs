@@ -23,8 +23,13 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("descripcion")]
         public string Descripcion { get; set; }
 
+        [Required]
+        [Column("estado")]
+        public bool Estado { get; set; }
+
         // Relación inversa: un rol puede tener muchos usuarios
         public ICollection<Usuario> Usuarios { get; set; }
+
     }
 }
 

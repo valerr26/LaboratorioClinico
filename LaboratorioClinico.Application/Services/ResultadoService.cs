@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Application.Services
 {
- public class ResultadoService
+    public class ResultadoService
     {
         private readonly IResultadoRepository _repository;
 
@@ -17,28 +17,46 @@ namespace LaboratorioClinico.Application.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Resultado>> ObtenerResultadosAsync()
+        // Obtener resultados activos
+        public async Task<IEnumerable<Resultado>> ObtenerResultadosActivosAsync()
         {
-            return await _repository.GetResultadosAsync();
+            var resultados = await _repository.GetResultadosAsync();
+            return resultados.Where(r => r.Estado);
         }
 
+        // Obtener resultado por Id (si está activo)
         public async Task<Resultado?> ObtenerResultadoPorIdAsync(int id)
         {
             if (id <= 0)
                 return null;
 
-            return await _repository.GetResultadoByIdAsync(id);
+            var resultado = await _repository.GetResultadoByIdAsync(id);
+            return (resultado != null && resultado.Estado) ? resultado : null;
         }
 
-        public async Task<string> AgregarResultadoAsync(Resultado resultado)
+        // Agregar resultado
+        public async Task<string> AgregarResultadoAsync(Resultado nuevoResultado)
         {
-            if (string.IsNullOrWhiteSpace(resultado.Detalle))
-                return "Error: El detalle del resultado es obligatorio";
+            try
+            {
+                if (string.IsNullOrWhiteSpace(nuevoResultado.Detalle))
+                    return "Error: El detalle del resultado es obligatorio";
 
-            var resultadoInsertado = await _repository.AddResultadoAsync(resultado);
-            return resultadoInsertado != null ? "Resultado agregado correctamente" : "Error: No se pudo agregar el resultado";
+                nuevoResultado.Estado = true; // Activo por defecto
+                var resultadoInsertado = await _repository.AddResultadoAsync(nuevoResultado);
+
+                if (resultadoInsertado == null || resultadoInsertado.Id <= 0)
+                    return "Error: No se pudo agregar el resultado";
+
+                return "Resultado agregado correctamente";
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}";
+            }
         }
 
+        // Modificar resultado
         public async Task<string> ModificarResultadoAsync(Resultado resultado)
         {
             if (resultado.Id <= 0)
@@ -52,15 +70,24 @@ namespace LaboratorioClinico.Application.Services
             existente.FechaEmision = resultado.FechaEmision;
             existente.IdExamen = resultado.IdExamen;
             existente.IdDoctor = resultado.IdDoctor;
+            existente.Estado = resultado.Estado;
 
             var actualizado = await _repository.UpdateResultadoAsync(existente);
-            return actualizado != null ? "Resultado modificado correctamente" : "Error: No se pudo modificar el resultado";
+
+            return actualizado != null ? "Resultado modificado correctamente" : "Error: No se pudo actualizar el resultado";
         }
 
+        // Eliminar resultado (borrado lógico)
         public async Task<string> EliminarResultadoAsync(int id)
         {
-            var resultado = await _repository.DeleteResultadoAsync(id);
-            return resultado ? "Resultado eliminado correctamente" : "Error: No se encontró el resultado";
+            var resultado = await _repository.GetResultadoByIdAsync(id);
+            if (resultado == null || !resultado.Estado)
+                return "Error: Resultado no encontrado";
+
+            resultado.Estado = false;
+            await _repository.UpdateResultadoAsync(resultado);
+
+            return "Resultado eliminado correctamente";
         }
     }
 }

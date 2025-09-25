@@ -30,5 +30,9 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("iddoctor")]
         [ForeignKey("Doctor")]
         public int IdDoctor { get; set; }
+
+        [Required]
+        [Column("estado")]
+        public bool Estado { get; set; }
     }
 }

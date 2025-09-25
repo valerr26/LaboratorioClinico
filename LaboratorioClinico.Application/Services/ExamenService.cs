@@ -17,22 +17,21 @@ namespace LaboratorioClinico.Application.Services
             _repository = repository;
         }
 
-        // Obtener todos los exámenes
-        public async Task<IEnumerable<Examen>> ObtenerExamenesAsync()
+        public async Task<IEnumerable<Examen>> ObtenerExamenesActivosAsync()
         {
-            return await _repository.GetExamenesAsync();
+            var examenes = await _repository.GetExamenesAsync();
+            return examenes.Where(e => e.Estado);
         }
 
-        // Obtener examen por Id
         public async Task<Examen?> ObtenerExamenPorIdAsync(int id)
         {
             if (id <= 0)
                 return null;
 
-            return await _repository.GetExamenByIdAsync(id);
+            var examen = await _repository.GetExamenByIdAsync(id);
+            return (examen != null && examen.Estado) ? examen : null;
         }
 
-        // Agregar un examen
         public async Task<string> AgregarExamenAsync(Examen examen)
         {
             if (string.IsNullOrWhiteSpace(examen.TipoExamen))
@@ -41,12 +40,12 @@ namespace LaboratorioClinico.Application.Services
             if (string.IsNullOrWhiteSpace(examen.Descripcion))
                 return "Error: La descripción del examen es obligatoria";
 
+            examen.Estado = true;
             var examenInsertado = await _repository.AddExamenAsync(examen);
 
             return examenInsertado != null ? "Examen agregado correctamente" : "Error: No se pudo agregar el examen";
         }
 
-        // Modificar un examen
         public async Task<string> ModificarExamenAsync(Examen examen)
         {
             if (examen.Id <= 0)
@@ -60,17 +59,23 @@ namespace LaboratorioClinico.Application.Services
             existente.Descripcion = examen.Descripcion;
             existente.Fecha = examen.Fecha;
             existente.IdPaciente = examen.IdPaciente;
+            existente.Estado = examen.Estado;
 
             var actualizado = await _repository.UpdateExamenAsync(existente);
 
             return actualizado != null ? "Examen modificado correctamente" : "Error: No se pudo modificar el examen";
         }
 
-        // Eliminar un examen
         public async Task<string> EliminarExamenAsync(int id)
         {
-            var resultado = await _repository.DeleteExamenAsync(id);
-            return resultado ? "Examen eliminado correctamente" : "Error: No se encontró el examen";
+            var examen = await _repository.GetExamenByIdAsync(id);
+            if (examen == null || !examen.Estado)
+                return "Error: Examen no encontrado";
+
+            examen.Estado = false;
+            await _repository.UpdateExamenAsync(examen);
+
+            return "Examen eliminado correctamente";
         }
     }
 }
