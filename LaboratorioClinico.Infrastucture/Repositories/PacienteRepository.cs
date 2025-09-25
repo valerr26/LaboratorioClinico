@@ -55,6 +55,7 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             existingPaciente.Email = paciente.Email;
             existingPaciente.Direccion = paciente.Direccion;
             existingPaciente.IdUsuario = paciente.IdUsuario;
+            existingPaciente.Estado = paciente.Estado;
 
             await _context.SaveChangesAsync();
             return existingPaciente;

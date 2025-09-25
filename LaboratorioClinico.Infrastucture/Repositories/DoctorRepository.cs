@@ -55,6 +55,7 @@ namespace LaboratorioClinico.Infrastucture.Repositories
             existingDoctor.Email = doctor.Email;
             existingDoctor.LicenciaMedica = doctor.LicenciaMedica;
             existingDoctor.IdUsuario = doctor.IdUsuario;
+            existingDoctor.Estado = doctor.Estado;
 
             await _context.SaveChangesAsync();
             return existingDoctor;

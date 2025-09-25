@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,6 +55,7 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             existingExamen.Fecha = examen.Fecha;
             existingExamen.Descripcion = examen.Descripcion;
             existingExamen.IdPaciente = examen.IdPaciente;
+            existingExamen.Estado = examen.Estado;
 
             await _context.SaveChangesAsync();
             return existingExamen;

@@ -24,11 +24,17 @@ namespace LaboratorioClinico.Domain.Entities
         public string Password { get; set; }
 
         [Column("idrol")]
+        [Required]
+        public int IdRol {  get; set; }
+
         [ForeignKey("Rol")]
-        public int IdRol { get; set; }
+        public  Rol Rol { get; set; }
 
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
+
+        public ICollection<Usuario>? Usuarios { get; set; }
+
     }
 }

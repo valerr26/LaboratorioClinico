@@ -32,12 +32,22 @@ namespace LaboratorioClinico.Domain.Entities
         public string NotasConsulta { get; set; }
 
         [Column("idpaciente")]
+        [Required]
+        public int IdPaciente {  get; set; }
+
         [ForeignKey("Paciente")]
-        public int IdPaciente { get; set; }
+        public Paciente Paciente { get; set; }
 
         [Column("iddoctor")]
-        [ForeignKey("Doctor")]
+        [Required]
         public int IdDoctor { get; set; }
+
+        [ForeignKey("Doctor")]
+        public Doctor Doctor { get; set; }
+
+        public ICollection<Examen>? Examenes { get; set; }
+        public ICollection<Resultado>? Resultados { get; set; }
+
     }
 }
 

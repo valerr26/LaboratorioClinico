@@ -1,4 +1,5 @@
-﻿using LaboratorioClinico.Domain.Entities;
+﻿using LaboratorioClinico.Application.Services;
+using LaboratorioClinico.Domain.Entities;
 using LaboratorioClinico.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,37 +12,81 @@ namespace LaboratorioClinico.WebAPI.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        private readonly AppDBContext _context;
+        private readonly UsuarioService _usuarioService;
 
-        public UsuarioController(AppDBContext context)
+
+        public UsuarioController(UsuarioService usuarioService)
         {
-            _context = context;
+            _usuarioService = usuarioService;
         }
 
         // GET: api/Usuario/get
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> Get()
+        public async Task<ActionResult<IEnumerable<Rol>>> Get()
         {
-            return await _context.Usuarios.ToListAsync();
+            var rol = await _usuarioService.ObtenerUsuariosActivosAsync();
+            return Ok(rol);
         }
 
         // GET api/<UsuarioController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Usuario>> GetById(int id)
         {
-            return "value";
+            try
+            {
+                var rol = await _usuarioService.ObtenerUsuarioPorIdAsync(id);
+
+                if (rol == null)
+                    return NotFound($"No se encontró un Usuario activo con ID {id}");
+
+                return Ok(rol);
+            }
+            catch (Exception ex)
+            {
+                //Aquí podrías registrar el error con ILogger
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // POST api/<UsuarioController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] Usuario usuario )
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var resultado = await _usuarioService.AgregarUsuarioAsync(usuario);
+
+            if (resultado.StartsWith("Error"))
+                return BadRequest(resultado);
+
+            return Ok(resultado);
+
         }
 
         // PUT api/<UsuarioController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] Usuario usuario)
         {
+            try
+            {
+                // El servicio valida si el id es válido o no coincide, no lo hacemos aquí
+                usuario.Id = id; // nos aseguramos de que use el id de la ruta
+
+                var resultado = await _usuarioService.ModificarUsuarioAsync(usuario);
+
+                if (resultado.StartsWith("Error"))
+                    return BadRequest(resultado);
+
+                return Ok(resultado);
+
+
+            }
+            catch (Exception ex)
+            {
+                // Registrar log aquí si tienes ILogger
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // DELETE api/<UsuarioController>/5

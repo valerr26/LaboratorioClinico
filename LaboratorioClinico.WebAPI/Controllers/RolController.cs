@@ -1,4 +1,5 @@
-﻿using LaboratorioClinico.Domain.Entities;
+﻿using LaboratorioClinico.Application.Services;
+using LaboratorioClinico.Domain.Entities;
 using LaboratorioClinico.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,37 +12,81 @@ namespace LaboratorioClinico.WebAPI.Controllers
     [ApiController]
     public class RolController : ControllerBase
     {
-        private readonly AppDBContext _context;
+        private readonly RolService _rolService;
 
-        public RolController(AppDBContext context)
+
+        public RolController(RolService rolService)
         {
-            _context = context;
+            _rolService = rolService;
         }
 
         // GET: api/RolController/get
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Rol>>> Get()
         {
-            return await _context.Roles.ToListAsync();
+            var rol = await _rolService.ObtenerRolesActivosAsync();
+            return Ok(rol);
         }
 
         // GET api/<RolController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Paciente>> GetById(int id)
         {
-            return "value";
+            try
+            {
+                var rol = await _rolService.ObtenerRolPorIdAsync(id);
+
+                if (rol == null)
+                    return NotFound($"No se encontró un Rol activo con ID {id}");
+
+                return Ok(rol);
+            }
+            catch (Exception ex)
+            {
+                //Aquí podrías registrar el error con ILogger
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // POST api/<RolController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] Rol rol)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var resultado = await _rolService.AgregarRolAsync(rol);
+
+            if (resultado.StartsWith("Error"))
+                return BadRequest(resultado);
+
+            return Ok(resultado);
+
         }
 
         // PUT api/<RolController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] Rol rol )
         {
+            try
+            {
+                // El servicio valida si el id es válido o no coincide, no lo hacemos aquí
+                rol.Id = id; // nos aseguramos de que use el id de la ruta
+
+                var resultado = await _rolService.ModificarRolAsync(rol);
+
+                if (resultado.StartsWith("Error"))
+                    return BadRequest(resultado);
+
+                return Ok(resultado);
+
+
+            }
+            catch (Exception ex)
+            {
+                // Registrar log aquí si tienes ILogger
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // DELETE api/<RolController>/5

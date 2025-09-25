@@ -56,6 +56,7 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             existingResultado.FechaEmision = resultado.FechaEmision;
             existingResultado.IdExamen = resultado.IdExamen;
             existingResultado.IdDoctor = resultado.IdDoctor;
+            existingResultado.Estado = resultado.Estado;
 
             await _context.SaveChangesAsync();
             return existingResultado;

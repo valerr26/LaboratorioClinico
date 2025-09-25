@@ -53,6 +53,7 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             existingUsuario.Username = usuario.Username;
             existingUsuario.Password = usuario.Password;
             existingUsuario.IdRol = usuario.IdRol;
+            existingUsuario.Estado = usuario.Estado;
 
             await _context.SaveChangesAsync();
             return existingUsuario;

@@ -28,7 +28,8 @@ namespace LaboratorioClinico.Domain.Entities
         public bool Estado { get; set; }
 
         // Relación inversa: un rol puede tener muchos usuarios
-        public ICollection<Usuario> Usuarios { get; set; }
+        public ICollection<Usuario>? Usuarios { get; set; }
+
 
     }
 }

@@ -52,6 +52,7 @@ namespace LaboratorioClinico.Infrastructure.Repositories
 
             existingRol.Nombre = rol.Nombre;
             existingRol.Descripcion = rol.Descripcion;
+            existingRol.Estado = rol.Estado;
 
             await _context.SaveChangesAsync();
             return existingRol;

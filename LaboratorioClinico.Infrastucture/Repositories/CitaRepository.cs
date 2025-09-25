@@ -62,6 +62,7 @@ namespace LaboratorioClinico.Infrastucture.Repositories
             existingCita.NotasConsulta = cita.NotasConsulta;
             existingCita.IdPaciente = cita.IdPaciente;
             existingCita.IdDoctor = cita.IdDoctor;
+            existingCita.Estado = cita.Estado;
 
             await _context.SaveChangesAsync();
             return existingCita;

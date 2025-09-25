@@ -24,12 +24,17 @@ namespace LaboratorioClinico.Domain.Entities
         public DateTime FechaEmision { get; set; }
 
         [Column("idexamen")]
-        [ForeignKey("Examen")]
+        [Required ]
         public int IdExamen { get; set; }
+        [ForeignKey("Examen")]
+        public Examen Examen { get; set; }
 
         [Column("iddoctor")]
-        [ForeignKey("Doctor")]
+        [Required ]
         public int IdDoctor { get; set; }
+
+        [ForeignKey("Doctor")]
+        public Doctor Doctor { get; set; }
 
         [Required]
         [Column("estado")]

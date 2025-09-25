@@ -1,5 +1,5 @@
 ﻿using LaboratorioClinico.Domain.Entities;
-using LaboratorioClinico.Infrastructure.Data;
+using LaboratorioClinico.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,37 +10,81 @@ namespace LaboratorioClinico.WebAPI.Controllers
     [ApiController]
     public class DoctorController : ControllerBase
     {
-        private readonly AppDBContext _context;
+        private readonly DoctorService _doctorService;
 
-        public DoctorController(AppDBContext context)
+
+        public DoctorController(DoctorService doctorService)
         {
-            _context = context;
+            _doctorService = doctorService;
         }
 
         // GET: api/Doctor/get
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Doctor>>> Get()
         {
-            return await _context.Doctores.ToListAsync();
+            var doctor = await _doctorService.ObtenerDoctoresActivosAsync();
+            return Ok(doctor);
         }
 
         // GET api/<DoctorController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Doctor>> GetById(int id)
         {
-            return "value";
+            try
+            {
+                var doctor = await _doctorService.ObtenerDoctorPorIdAsync(id);
+
+                if (doctor == null)
+                    return NotFound($"No se encontró un Doctor activo con ID {id}");
+
+                return Ok(doctor);
+            }
+            catch (Exception ex)
+            {
+                //Aquí podrías registrar el error con ILogger
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // POST api/<DoctorController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] Doctor doctor)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var resultado = await _doctorService.AgregarDoctorAsync(doctor);
+
+            if (resultado.StartsWith("Error"))
+                return BadRequest(resultado);
+
+            return Ok(resultado);
+
         }
 
         // PUT api/<DoctorController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] Doctor doctor)
         {
+            try
+            {
+                // El servicio valida si el id es válido o no coincide, no lo hacemos aquí
+                doctor.Id = id; // nos aseguramos de que use el id de la ruta
+
+                var resultado = await _doctorService.ModificarDoctorAsync(doctor);
+
+                if (resultado.StartsWith("Error"))
+                    return BadRequest(resultado);
+
+                return Ok(resultado);
+
+
+            }
+            catch (Exception ex)
+            {
+                // Registrar log aquí si tienes ILogger
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // DELETE api/<DoctorController>/5

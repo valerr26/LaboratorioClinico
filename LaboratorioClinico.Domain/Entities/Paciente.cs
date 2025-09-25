@@ -40,11 +40,25 @@ namespace LaboratorioClinico.Domain.Entities
         public string Direccion { get; set; }
 
         [Column("idusuario")]
-        [ForeignKey("Usuario")]
+        [Required]
         public int IdUsuario { get; set; }
+
+        [ForeignKey("Usuario")]
+        public Usuario  Usuario { get; set; }
+
+        [Column("idCita")]
+        [Required]
+        public int  IdCita  { get; set; }
+
+        [ForeignKey("Cita")]
+        public Cita Cita { get; set; }
 
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
+
+        // Relación inversa: un rol puede tener muchas Citas
+        public ICollection<Cita>? Citas { get; set; }
+
     }
 }

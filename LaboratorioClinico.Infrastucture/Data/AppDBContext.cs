@@ -3,6 +3,7 @@ using LaboratorioClinico.Domain.Entities;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection.Emit;
+using Microsoft.Win32;
 
 namespace LaboratorioClinico.Infrastructure.Data
 {
@@ -32,6 +33,36 @@ namespace LaboratorioClinico.Infrastructure.Data
             modelBuilder.Entity<Resultado>().ToTable("t_resultado");
 
             base.OnModelCreating(modelBuilder);
+
+            // Rol ↔ Usuario (1:N)
+            modelBuilder.Entity<Usuario>()
+              .HasOne(u => u.Rol)
+              .WithMany(r => r.Usuarios)
+              .HasForeignKey(u => u.IdRol);
+
+            // Usuario ↔ Cita(1:N)
+            modelBuilder.Entity<Cita>()
+                .HasOne(c => c.Paciente)
+                .WithMany(p => p.Cita)
+                .HasForeignKey(c => c.IdPaciente);
+
+            // Doctor ↔ Cita (1:N)
+            modelBuilder.Entity<Cita>()
+                .HasOne(c => c.Doctor)
+                .WithMany(d => d.Cita)
+                .HasForeignKey(c => c.IdDoctor);
+
+            // Cita ↔ Examen (1:N)
+            modelBuilder.Entity<Examen>()
+                .HasOne(e => e.Cita)
+                .WithMany(c => c.Examen)
+                .HasForeignKey(e => e.CitaId);
+
+            // Examen ↔ Resultado (1:1) 
+            modelBuilder.Entity<Resultado>()
+                .HasOne(r => r.Examen)
+                .WithOne(e => e.Resultado)
+                .HasForeignKey<Resultado>(r => r.ExamenId);
         }
     }
 }

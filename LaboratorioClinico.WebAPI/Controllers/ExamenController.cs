@@ -1,4 +1,5 @@
-﻿using LaboratorioClinico.Domain.Entities;
+﻿using LaboratorioClinico.Application.Services;
+using LaboratorioClinico.Domain.Entities;
 using LaboratorioClinico.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,37 +11,81 @@ namespace LaboratorioClinico.WebAPI.Controllers
     [ApiController]
     public class ExamenController : ControllerBase
     {
-        private readonly AppDBContext _context;
+        private readonly ExamenService _examenService;
 
-        public ExamenController(AppDBContext context)
+
+        public ExamenController(ExamenService examenService)
         {
-            _context = context;
+            _examenService = examenService;
         }
 
         // GET: api/Examen/get
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Examen>>> Get()
         {
-            return await _context.Examenes.ToListAsync();
+            var examen = await _examenService.ObtenerExamenesActivosAsync();
+            return Ok(examen);
         }
 
         // GET api/<ExamenController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Examen>> GetById(int id)
         {
-            return "value";
+            try
+            {
+                var examen = await _examenService.ObtenerExamenPorIdAsync(id);
+
+                if (examen == null)
+                    return NotFound($"No se encontró un Examen activo con ID {id}");
+
+                return Ok(examen);
+            }
+            catch (Exception ex)
+            {
+                //Aquí podrías registrar el error con ILogger
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // POST api/<ExamenController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] Examen examen)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var resultado = await _examenService.AgregarExamenAsync(examen);
+
+            if (resultado.StartsWith("Error"))
+                return BadRequest(resultado);
+
+            return Ok(resultado);
+
         }
 
         // PUT api/<ExamenController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] Examen examen)
         {
+            try
+            {
+                // El servicio valida si el id es válido o no coincide, no lo hacemos aquí
+                examen.Id = id; // nos aseguramos de que use el id de la ruta
+
+                var resultado = await _examenService.ModificarExamenAsync(examen);
+
+                if (resultado.StartsWith("Error"))
+                    return BadRequest(resultado);
+
+                return Ok(resultado);
+
+
+            }
+            catch (Exception ex)
+            {
+                // Registrar log aquí si tienes ILogger
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // DELETE api/<ExamenController>/5
