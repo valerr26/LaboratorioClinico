@@ -40,29 +40,30 @@ namespace LaboratorioClinico.Infrastructure.Data
               .WithMany(r => r.Usuarios)
               .HasForeignKey(u => u.IdRol);
 
-            // Usuario ↔ Cita(1:N)
+            // Paciente ↔ Cita (1:N)
             modelBuilder.Entity<Cita>()
                 .HasOne(c => c.Paciente)
-                .WithMany(p => p.Cita)
+                .WithMany(p => p.Citas) 
                 .HasForeignKey(c => c.IdPaciente);
 
             // Doctor ↔ Cita (1:N)
             modelBuilder.Entity<Cita>()
                 .HasOne(c => c.Doctor)
-                .WithMany(d => d.Cita)
+                .WithMany(d => d.Citas) 
                 .HasForeignKey(c => c.IdDoctor);
 
             // Cita ↔ Examen (1:N)
             modelBuilder.Entity<Examen>()
                 .HasOne(e => e.Cita)
-                .WithMany(c => c.Examen)
-                .HasForeignKey(e => e.CitaId);
+                .WithMany(c => c.Examenes) 
+                .HasForeignKey(e => e.IdCita);
 
-            // Examen ↔ Resultado (1:1) 
+
+            // Examen = Resultado (1:1) 
             modelBuilder.Entity<Resultado>()
                 .HasOne(r => r.Examen)
                 .WithOne(e => e.Resultado)
-                .HasForeignKey<Resultado>(r => r.ExamenId);
+                .HasForeignKey<Resultado>(r => r.IdExamen);
         }
     }
 }

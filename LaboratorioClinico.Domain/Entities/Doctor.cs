@@ -46,11 +46,11 @@ namespace LaboratorioClinico.Domain.Entities
         [ForeignKey("Usuario")]
         public Usuario Usuario { get; set; }
 
-        [Column("idCita")]
+        [Column("idcita")]
         [Required]
         public int IdCita { get; set; }
 
-        [ForeignKey("Cita")]
+        [ForeignKey("cita")]
         public Cita Cita { get; set; }
 
         [Required]

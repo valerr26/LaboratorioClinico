@@ -45,6 +45,14 @@ namespace LaboratorioClinico.Domain.Entities
         [ForeignKey("Doctor")]
         public Doctor Doctor { get; set; }
 
+        [Column("idexamen")]
+        [Required]
+        public int IdExamen { get; set; }
+
+        [ForeignKey("Examen")]
+        public Examen Examen { get; set; }
+
+
         public ICollection<Examen>? Examenes { get; set; }
         public ICollection<Resultado>? Resultados { get; set; }
 
