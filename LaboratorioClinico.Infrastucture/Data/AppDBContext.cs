@@ -58,12 +58,12 @@ namespace LaboratorioClinico.Infrastructure.Data
                 .WithMany(c => c.Examenes) 
                 .HasForeignKey(e => e.IdCita);
 
+            modelBuilder.Entity<Examen>()
+                .HasOne(e => e.Resultado)
+                .WithMany(r => r.Examenes)
+                .HasForeignKey(e => e.IdResultado);
 
-            // Examen = Resultado (1:1) 
-            modelBuilder.Entity<Resultado>()
-                .HasOne(r => r.Examen)
-                .WithOne(e => e.Resultado)
-                .HasForeignKey<Resultado>(r => r.IdExamen);
+
         }
     }
 }

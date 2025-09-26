@@ -26,18 +26,21 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("idexamen")]
         [Required ]
         public int IdExamen { get; set; }
-        [ForeignKey("Examen")]
+        [ForeignKey("idexamen")]
         public Examen Examen { get; set; }
 
         [Column("iddoctor")]
         [Required ]
         public int IdDoctor { get; set; }
 
-        [ForeignKey("Doctor")]
+        [ForeignKey("iddoctor")]
         public Doctor Doctor { get; set; }
 
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
+
+
+        public ICollection<Examen>? Examenes { get; set; }
     }
 }

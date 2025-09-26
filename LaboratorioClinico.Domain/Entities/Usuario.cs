@@ -27,14 +27,14 @@ namespace LaboratorioClinico.Domain.Entities
         [Required]
         public int IdRol {  get; set; }
 
-        [ForeignKey("Rol")]
+        [ForeignKey("idrol")]
         public  Rol Rol { get; set; }
 
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
 
-        public ICollection<Usuario>? Usuarios { get; set; }
+
 
     }
 }

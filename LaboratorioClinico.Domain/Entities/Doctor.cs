@@ -43,14 +43,14 @@ namespace LaboratorioClinico.Domain.Entities
         [Required]
         public int IdUsuario { get; set; }
 
-        [ForeignKey("Usuario")]
+        [ForeignKey("idusuario")]
         public Usuario Usuario { get; set; }
 
         [Column("idcita")]
         [Required]
         public int IdCita { get; set; }
 
-        [ForeignKey("cita")]
+        [ForeignKey("idcita")]
         public Cita Cita { get; set; }
 
         [Required]
@@ -58,6 +58,7 @@ namespace LaboratorioClinico.Domain.Entities
         public bool Estado { get; set; }
 
         public ICollection<Cita>? Citas { get; set; }
+        public ICollection<Usuario>? Usuarios { get; set; }
 
     }
 }
