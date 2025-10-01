@@ -23,24 +23,24 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("fechaemision")]
         public DateTime FechaEmision { get; set; }
 
+        // Relación con Examen (N:1)
+        [Required]
         [Column("idexamen")]
-        [Required ]
         public int IdExamen { get; set; }
-        [ForeignKey("idexamen")]
+
+        [ForeignKey(nameof(IdExamen))]
         public Examen Examen { get; set; }
 
+        // Relación con Doctor (N:1)
+        [Required]
         [Column("iddoctor")]
-        [Required ]
         public int IdDoctor { get; set; }
 
-        [ForeignKey("iddoctor")]
+        [ForeignKey(nameof(IdDoctor))]
         public Doctor Doctor { get; set; }
 
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
-
-
-        public ICollection<Examen>? Examenes { get; set; }
     }
 }

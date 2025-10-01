@@ -4,6 +4,7 @@ using LaboratorioClinico.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LaboratorioClinico.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251001164515_ProyectoInicial")]
+    partial class ProyectoInicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,6 +46,10 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("iddoctor");
 
+                    b.Property<int>("IdExamen")
+                        .HasColumnType("int")
+                        .HasColumnName("idexamen");
+
                     b.Property<int>("IdPaciente")
                         .HasColumnType("int")
                         .HasColumnName("idpaciente");
@@ -62,6 +69,8 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IdDoctor");
+
+                    b.HasIndex("IdExamen");
 
                     b.HasIndex("IdPaciente");
 
@@ -159,6 +168,9 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("idpaciente");
 
+                    b.Property<int?>("ResultadoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("TipoExamen")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -170,6 +182,8 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                     b.HasIndex("IdCita");
 
                     b.HasIndex("IdPaciente");
+
+                    b.HasIndex("ResultadoId");
 
                     b.ToTable("t_examen", (string)null);
                 });
@@ -209,10 +223,6 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("fechanacimiento");
 
-                    b.Property<int>("IdDoctor")
-                        .HasColumnType("int")
-                        .HasColumnName("iddoctor");
-
                     b.Property<int>("IdUsuario")
                         .HasColumnType("int")
                         .HasColumnName("idusuario");
@@ -231,8 +241,6 @@ namespace LaboratorioClinico.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdDoctor");
-
                     b.HasIndex("IdUsuario");
 
                     b.ToTable("t_paciente", (string)null);
@@ -246,6 +254,9 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                         .HasColumnName("idresultado");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CitaId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Detalle")
                         .IsRequired()
@@ -270,6 +281,8 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                         .HasColumnName("idexamen");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CitaId");
 
                     b.HasIndex("IdDoctor");
 
@@ -352,6 +365,12 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("LaboratorioClinico.Domain.Entities.Examen", "Examen")
+                        .WithMany()
+                        .HasForeignKey("IdExamen")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LaboratorioClinico.Domain.Entities.Paciente", "Paciente")
                         .WithMany("Citas")
                         .HasForeignKey("IdPaciente")
@@ -359,6 +378,8 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Doctor");
+
+                    b.Navigation("Examen");
 
                     b.Navigation("Paciente");
                 });
@@ -388,6 +409,10 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("LaboratorioClinico.Domain.Entities.Resultado", null)
+                        .WithMany("Examenes")
+                        .HasForeignKey("ResultadoId");
+
                     b.Navigation("Cita");
 
                     b.Navigation("Paciente");
@@ -395,25 +420,21 @@ namespace LaboratorioClinico.Infrastructure.Migrations
 
             modelBuilder.Entity("LaboratorioClinico.Domain.Entities.Paciente", b =>
                 {
-                    b.HasOne("LaboratorioClinico.Domain.Entities.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("IdDoctor")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("LaboratorioClinico.Domain.Entities.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Doctor");
-
                     b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("LaboratorioClinico.Domain.Entities.Resultado", b =>
                 {
+                    b.HasOne("LaboratorioClinico.Domain.Entities.Cita", null)
+                        .WithMany("Resultados")
+                        .HasForeignKey("CitaId");
+
                     b.HasOne("LaboratorioClinico.Domain.Entities.Doctor", "Doctor")
                         .WithMany()
                         .HasForeignKey("IdDoctor")
@@ -445,6 +466,8 @@ namespace LaboratorioClinico.Infrastructure.Migrations
             modelBuilder.Entity("LaboratorioClinico.Domain.Entities.Cita", b =>
                 {
                     b.Navigation("Examenes");
+
+                    b.Navigation("Resultados");
                 });
 
             modelBuilder.Entity("LaboratorioClinico.Domain.Entities.Doctor", b =>
@@ -456,6 +479,11 @@ namespace LaboratorioClinico.Infrastructure.Migrations
                 {
                     b.Navigation("Citas");
 
+                    b.Navigation("Examenes");
+                });
+
+            modelBuilder.Entity("LaboratorioClinico.Domain.Entities.Resultado", b =>
+                {
                     b.Navigation("Examenes");
                 });
 

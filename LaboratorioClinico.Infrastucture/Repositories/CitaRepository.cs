@@ -42,8 +42,8 @@ namespace LaboratorioClinico.Infrastucture.Repositories
         public async Task<IEnumerable<Cita>> GetCitasAsync()
         {
             return await _context.Citas
-                                 .Include(c => c.IdPaciente)  // propiedad de navegación
-                                 .Include(c => c.IdDoctor)    // propiedad de navegación
+                                 .Include(c => c.Paciente)  // propiedad de navegación
+                                 .Include(c => c.Doctor)    // propiedad de navegación
                                  .ToListAsync();
         }
 

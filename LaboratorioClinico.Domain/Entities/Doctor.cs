@@ -39,26 +39,19 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("licenciamedica")]
         public string LicenciaMedica { get; set; }
 
-        [Column("idusuario")]
+        // Relación con Usuario
         [Required]
+        [Column("idusuario")]
         public int IdUsuario { get; set; }
 
-        [ForeignKey("idusuario")]
+        [ForeignKey(nameof(IdUsuario))]
         public Usuario Usuario { get; set; }
 
-        [Column("idcita")]
-        [Required]
-        public int IdCita { get; set; }
-
-        [ForeignKey("idcita")]
-        public Cita Cita { get; set; }
+        // Relación con Citas (1 doctor -> muchas citas)
+        public ICollection<Cita> Citas { get; set; }
 
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
-
-        public ICollection<Cita>? Citas { get; set; }
-        public ICollection<Usuario>? Usuarios { get; set; }
-
     }
 }

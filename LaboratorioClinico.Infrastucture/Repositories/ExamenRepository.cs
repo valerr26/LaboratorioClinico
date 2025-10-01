@@ -25,16 +25,19 @@ namespace LaboratorioClinico.Infrastructure.Repositories
         public async Task<IEnumerable<Examen>> GetExamenesAsync()
         {
             return await _context.Examenes
-                                 .Include(e => e.IdPaciente) // si tienes la relación configurada
+                                 .Include(e => e.Paciente)  // 👈 propiedad de navegación
+                                 .Include(e => e.Cita)      // opcional si quieres también la cita
                                  .ToListAsync();
         }
 
         public async Task<Examen> GetExamenByIdAsync(int id)
         {
             return await _context.Examenes
-                                 .Include(e => e.IdPaciente) // opcional
+                                 .Include(e => e.Paciente)  // 👈 no el Id, sino la entidad relacionada
+                                 .Include(e => e.Cita)
                                  .FirstOrDefaultAsync(e => e.Id == id);
         }
+
 
         public async Task<Examen> AddExamenAsync(Examen examen)
         {
@@ -55,6 +58,7 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             existingExamen.Fecha = examen.Fecha;
             existingExamen.Descripcion = examen.Descripcion;
             existingExamen.IdPaciente = examen.IdPaciente;
+            existingExamen.IdCita = examen.IdCita;
             existingExamen.Estado = examen.Estado;
 
             await _context.SaveChangesAsync();
