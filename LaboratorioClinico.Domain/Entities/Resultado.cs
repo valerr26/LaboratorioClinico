@@ -42,5 +42,48 @@ namespace LaboratorioClinico.Domain.Entities
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
+
+        // ✅ MÉTODOS CON LÓGICA PARA PRUEBAS UNITARIAS
+
+        /// <summary>
+        /// Activa el resultado.
+        /// </summary>
+        public void Activar()
+        {
+            Estado = true;
+        }
+
+        /// <summary>
+        /// Desactiva el resultado.
+        /// </summary>
+        public void Desactivar()
+        {
+            Estado = false;
+        }
+
+        /// <summary>
+        /// Verifica si el resultado está activo.
+        /// </summary>
+        public bool EstaActivo()
+        {
+            return Estado;
+        }
+
+        /// <summary>
+        /// Determina si el resultado es reciente (emitido en los últimos 7 días).
+        /// </summary>
+        public bool EsReciente()
+        {
+            return FechaEmision >= DateTime.Now.AddDays(-7);
+        }
+
+        /// <summary>
+        /// Obtiene un resumen legible del resultado.
+        /// </summary>
+        public string ObtenerResumen()
+        {
+            string estadoTexto = Estado ? "Activo" : "Inactivo";
+            return $"Resultado #{Id}: {Detalle} - Emitido el {FechaEmision:dd/MM/yyyy} [{estadoTexto}]";
+        }
     }
 }

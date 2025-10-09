@@ -46,5 +46,48 @@ namespace LaboratorioClinico.Domain.Entities
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
+
+        // ✅ MÉTODOS PARA PRUEBAS UNITARIAS Y DOMINIO
+
+        /// <summary>
+        /// Verifica si el examen está activo.
+        /// </summary>
+        public bool EstaActivo()
+        {
+            return Estado;
+        }
+
+        /// <summary>
+        /// Activa el examen.
+        /// </summary>
+        public void Activar()
+        {
+            Estado = true;
+        }
+
+        /// <summary>
+        /// Desactiva el examen.
+        /// </summary>
+        public void Desactivar()
+        {
+            Estado = false;
+        }
+
+        /// <summary>
+        /// Determina si el examen es reciente (realizado en los últimos 7 días).
+        /// </summary>
+        public bool EsReciente()
+        {
+            return Fecha >= DateTime.Now.AddDays(-7);
+        }
+
+        /// <summary>
+        /// Obtiene un resumen legible del examen.
+        /// </summary>
+        public string ObtenerResumen()
+        {
+            string estadoTexto = Estado ? "Activo" : "Inactivo";
+            return $"Examen #{Id}: {TipoExamen} - {Descripcion} ({Fecha:dd/MM/yyyy}) [{estadoTexto}]";
+        }
     }
 }

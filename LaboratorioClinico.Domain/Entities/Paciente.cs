@@ -59,10 +59,57 @@ namespace LaboratorioClinico.Domain.Entities
             [ForeignKey(nameof(IdDoctor))]
             public Doctor Doctor { get; set; }
 
-        // Relación: un paciente puede tener muchas citas
-        public ICollection<Cita>? Citas { get; set; }
+            // Relación: un paciente puede tener muchas citas
+            public ICollection<Cita>? Citas { get; set; }
 
             // Relación: un paciente puede tener muchos exámenes
             public ICollection<Examen>? Examenes { get; set; }
+
+            // ✅ MÉTODOS CON LÓGICA PARA PRUEBAS UNITARIAS
+
+            /// <summary>
+            /// Devuelve el nombre completo del paciente.
+            /// </summary>
+            public string ObtenerNombreCompleto()
+            {
+                return $"{Nombre} {Apellido}";
+            }
+
+            /// <summary>
+            /// Activa al paciente.
+            /// </summary>
+            public void Activar()
+            {
+                Estado = true;
+            }
+
+            /// <summary>
+            /// Desactiva al paciente.
+            /// </summary>
+            public void Desactivar()
+            {
+                Estado = false;
+            }
+
+            /// <summary>
+            /// Determina si el paciente es mayor de edad (18 años o más).
+            /// </summary>
+            public bool EsMayorEdad()
+            {
+                var edad = DateTime.Now.Year - FechaNacimiento.Year;
+                if (FechaNacimiento.Date > DateTime.Now.AddYears(-edad)) edad--;
+                return edad >= 18;
+            }
+
+            /// <summary>
+            /// Obtiene un resumen legible del paciente.
+            /// </summary>
+            public string ObtenerResumen()
+            {
+                string estadoTexto = Estado ? "Activo" : "Inactivo";
+                return $"Paciente: {Nombre} {Apellido} ({estadoTexto}) - Nacido el {FechaNacimiento:dd/MM/yyyy}";
+            }
+
         }
-    }
+
+}

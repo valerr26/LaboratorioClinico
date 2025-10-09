@@ -30,6 +30,49 @@ namespace LaboratorioClinico.Domain.Entities
         // Relación inversa: un rol puede tener muchos usuarios
         public ICollection<Usuario>? Usuarios { get; set; }
 
+        // ✅ MÉTODOS CON LÓGICA PARA PRUEBAS UNITARIAS
+
+        /// <summary>
+        /// Devuelve una descripción completa combinando nombre y descripción.
+        /// </summary>
+        public string ObtenerDescripcionCompleta()
+        {
+            return $"{Nombre} - {Descripcion}";
+        }
+
+        /// <summary>
+        /// Activa el rol (cambia Estado a true).
+        /// </summary>
+        public void Activar()
+        {
+            Estado = true;
+        }
+
+        /// <summary>
+        /// Desactiva el rol (cambia Estado a false).
+        /// </summary>
+        public void Desactivar()
+        {
+            Estado = false;
+        }
+
+        /// <summary>
+        /// Verifica si el rol está activo.
+        /// </summary>
+        public bool EstaActivo()
+        {
+            return Estado;
+        }
+
+        /// <summary>
+        /// Devuelve un resumen legible del rol (para logs o vistas).
+        /// </summary>
+        public string ObtenerResumen()
+        {
+            string estadoTexto = Estado ? "Activo" : "Inactivo";
+            return $"Rol: {Nombre} ({estadoTexto}) - {Descripcion}";
+        }
+
 
     }
 }

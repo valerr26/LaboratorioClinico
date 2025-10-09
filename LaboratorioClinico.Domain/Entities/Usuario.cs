@@ -34,5 +34,28 @@ namespace LaboratorioClinico.Domain.Entities
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
+
+        // ✅ MÉTODOS CON LÓGICA PARA PRUEBAS UNITARIAS
+
+        public void Activar()
+        {
+            Estado = true;
+        }
+
+        public void Desactivar()
+        {
+            Estado = false;
+        }
+
+        public bool EstaActivo()
+        {
+            return Estado;
+        }
+
+        public string ObtenerResumen()
+        {
+            string estadoTexto = Estado ? "Activo" : "Inactivo";
+            return $"Usuario: {Username} ({estadoTexto}) | Rol: {Rol?.Nombre ?? "Sin rol"}";
+        }
     }
 }

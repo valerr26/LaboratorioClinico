@@ -48,5 +48,48 @@ namespace LaboratorioClinico.Domain.Entities
 
         // 🔹 Relación 1:N con Resultados
         public ICollection<Examen>? Examenes { get; set; }
+
+        // ✅ MÉTODOS PARA PRUEBAS UNITARIAS Y LÓGICA DE DOMINIO
+
+        /// <summary>
+        /// Retorna true si la cita está activa.
+        /// </summary>
+        public bool EstaActiva()
+        {
+            return Estado;
+        }
+
+        /// <summary>
+        /// Cancela la cita (cambia estado a false).
+        /// </summary>
+        public void Cancelar()
+        {
+            Estado = false;
+        }
+
+        /// <summary>
+        /// Reactiva una cita previamente cancelada.
+        /// </summary>
+        public void Reactivar()
+        {
+            Estado = true;
+        }
+
+        /// <summary>
+        /// Verifica si la cita es futura (fecha mayor a la actual).
+        /// </summary>
+        public bool EsCitaFutura()
+        {
+            return FechaHora > DateTime.Now;
+        }
+
+        /// <summary>
+        /// Obtiene un resumen legible de la cita.
+        /// </summary>
+        public string ObtenerResumen()
+        {
+            string estadoTexto = Estado ? "Activa" : "Cancelada";
+            return $"Cita #{Id}: {Motivo} - {FechaHora:dd/MM/yyyy HH:mm} ({estadoTexto})";
+        }
     }
 }
