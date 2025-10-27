@@ -24,16 +24,16 @@ namespace LaboratorioClinico.Infrastructure.Repositories
         public async Task<IEnumerable<Resultado>> GetResultadosAsync()
         {
             return await _context.Resultados
-                                 .Include(r => r.IdExamen) // si configuraste la relación en el DbContext
-                                 .Include(r => r.IdDoctor) // opcional
+                                 .Include(r => r.Examen) // si configuraste la relación en el DbContext
+                                 .Include(r => r.Doctor) // opcional
                                  .ToListAsync();
         }
 
         public async Task<Resultado> GetResultadoByIdAsync(int id)
         {
             return await _context.Resultados
-                                 .Include(r => r.IdExamen)
-                                 .Include(r => r.IdDoctor)
+                                 .Include(r => r.Examen)
+                                 .Include(r => r.Doctor)
                                  .FirstOrDefaultAsync(r => r.Id == id);
         }
 

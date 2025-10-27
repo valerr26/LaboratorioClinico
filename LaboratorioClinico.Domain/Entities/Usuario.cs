@@ -19,17 +19,20 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("username")]
         public string Username { get; set; }
 
-        [Required, StringLength(100)]
         [Column("password")]
-        public string Password { get; set; }
+        [Required, MaxLength(100)]
+        public string PasswordHash { get; set; } = string.Empty;
 
-        // Relación con Rol
-        [Required]
-        [ForeignKey("Rol")]
+        // Campo transitorio: NO va a BD; solo para entrada (registro/login)
+        [NotMapped]
+        public string? Password { get; set; }   // vendrá en el JSON del request
+
         [Column("idrol")]
+        [Required]
         public int IdRol { get; set; }
 
-        public Rol Rol { get; set; }
+       
+        public Rol? Rol { get; set; }
 
         [Required]
         [Column("estado")]

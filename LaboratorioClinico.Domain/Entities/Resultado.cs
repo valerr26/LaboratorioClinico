@@ -28,7 +28,7 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("idexamen")]
         public int IdExamen { get; set; }
 
-        [ForeignKey(nameof(IdExamen))]
+       
         public Examen Examen { get; set; }
 
         // Relación con Doctor (N:1)
@@ -36,7 +36,7 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("iddoctor")]
         public int IdDoctor { get; set; }
 
-        [ForeignKey(nameof(IdDoctor))]
+        
         public Doctor Doctor { get; set; }
 
         [Required]

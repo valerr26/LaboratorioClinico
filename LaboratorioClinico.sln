@@ -11,11 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.Infrastr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.WebAPI", "LaboratorioClinico.WebAPI\LaboratorioClinico.WebAPI.csproj", "{FE059D24-0E08-4875-8822-E2A233959F7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaboratorioClinico.UnitTest.AppMSTest", "LaboratorioClinico.UnitTest.AppMSTest\LaboratorioClinico.UnitTest.AppMSTest.csproj", "{7FF9C618-341C-4745-B801-D2EBFB370201}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.UnitTest.AppMSTest", "LaboratorioClinico.UnitTest.AppMSTest\LaboratorioClinico.UnitTest.AppMSTest.csproj", "{7FF9C618-341C-4745-B801-D2EBFB370201}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaboratorioClinico.UnitTest.AppxUnit", "LaboratorioClinico.UnitTest.AppxUnit\LaboratorioClinico.UnitTest.AppxUnit.csproj", "{ED718938-D1C8-4636-B6F6-F80E7BD42253}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaboratorioClinico.UnitTest.AppxUnit", "LaboratorioClinico.UnitTest.AppxUnit\LaboratorioClinico.UnitTest.AppxUnit.csproj", "{ED718938-D1C8-4636-B6F6-F80E7BD42253}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PruebaUIWeb", "PruebaUIWeb\PruebaUIWeb.csproj", "{71637639-E4D8-47BD-BA0F-6A20727D4A12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PruebaUIWeb", "PruebaUIWeb\PruebaUIWeb.csproj", "{71637639-E4D8-47BD-BA0F-6A20727D4A12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

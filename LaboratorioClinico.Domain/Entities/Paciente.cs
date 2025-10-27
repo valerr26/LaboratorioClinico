@@ -45,7 +45,7 @@ namespace LaboratorioClinico.Domain.Entities
             [Column("idusuario")]
             public int IdUsuario { get; set; }
 
-            [ForeignKey(nameof(IdUsuario))]
+            
             public Usuario Usuario { get; set; }
 
             [Required]
@@ -56,7 +56,7 @@ namespace LaboratorioClinico.Domain.Entities
             [Column("iddoctor")]
             public int IdDoctor { get; set; }
 
-            [ForeignKey(nameof(IdDoctor))]
+            
             public Doctor Doctor { get; set; }
 
             // Relación: un paciente puede tener muchas citas

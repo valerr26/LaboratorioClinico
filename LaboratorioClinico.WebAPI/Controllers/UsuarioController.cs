@@ -1,6 +1,7 @@
 ﻿using LaboratorioClinico.Application.Services;
 using LaboratorioClinico.Domain.Entities;
 using LaboratorioClinico.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,8 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LaboratorioClinico.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("api/usuario")]
     public class UsuarioController : ControllerBase
     {
         private readonly UsuarioService _usuarioService;

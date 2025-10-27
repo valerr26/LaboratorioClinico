@@ -1,14 +1,16 @@
 ﻿using LaboratorioClinico.Application.Services;
 using LaboratorioClinico.Domain.Entities;
 using LaboratorioClinico.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LaboratorioClinico.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
+    [Route("api/paciente")]
     public class PacienteController : ControllerBase
     {
         private readonly PacienteService _pacienteService;

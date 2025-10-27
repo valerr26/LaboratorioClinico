@@ -21,20 +21,33 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             _context = context;
         }
 
+        // 🔹 Obtener todos los usuarios
         public async Task<IEnumerable<Usuario>> GetUsuarioAsync()
         {
             return await _context.Usuarios
-                                 .Include(u => u.IdRol) // si configuraste navegación con Rol
+                                 .Include(u => u.Rol)
+                                 .AsNoTracking()
                                  .ToListAsync();
         }
 
+        // 🔹 Obtener un usuario por ID
         public async Task<Usuario> GetUsuarioByIdAsync(int id)
         {
             return await _context.Usuarios
-                                 .Include(u => u.IdRol)
+                                 .Include(u => u.Rol)
+                                 .AsNoTracking()
                                  .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        // 🔹 Obtener un usuario por Username (para autenticación)
+        public async Task<Usuario?> GetByUsernameAsync(string username)
+        {
+            return await _context.Usuarios
+                                 .AsNoTracking()
+                                 .FirstOrDefaultAsync(u => u.Username == username);
+        }
+
+        // 🔹 Agregar usuario
         public async Task<Usuario> AddUsuarioAsync(Usuario usuario)
         {
             _context.Usuarios.Add(usuario);
@@ -42,16 +55,15 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             return usuario;
         }
 
+        // 🔹 Actualizar usuario
         public async Task<Usuario> UpdateUsuarioAsync(Usuario usuario)
         {
             var existingUsuario = await _context.Usuarios.FindAsync(usuario.Id);
             if (existingUsuario == null)
-            {
                 return null;
-            }
 
             existingUsuario.Username = usuario.Username;
-            existingUsuario.Password = usuario.Password;
+            existingUsuario.PasswordHash = usuario.PasswordHash;
             existingUsuario.IdRol = usuario.IdRol;
             existingUsuario.Estado = usuario.Estado;
 
@@ -59,13 +71,12 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             return existingUsuario;
         }
 
+        // 🔹 Eliminar usuario
         public async Task<bool> DeleteUsuarioAsync(int id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
             if (usuario == null)
-            {
                 return false;
-            }
 
             _context.Usuarios.Remove(usuario);
             await _context.SaveChangesAsync();

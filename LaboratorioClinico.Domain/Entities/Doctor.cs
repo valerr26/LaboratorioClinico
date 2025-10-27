@@ -44,7 +44,7 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("idusuario")]
         public int IdUsuario { get; set; }
 
-        [ForeignKey(nameof(IdUsuario))]
+        
         public Usuario Usuario { get; set; }
 
         // Relación con Citas (1 doctor -> muchas citas)

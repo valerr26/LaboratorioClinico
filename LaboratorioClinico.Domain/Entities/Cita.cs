@@ -33,16 +33,14 @@ namespace LaboratorioClinico.Domain.Entities
 
         // 🔹 Relación con Paciente
         [Column("idpaciente")]
-        public int IdPaciente { get; set; }
-
-        [ForeignKey(nameof(IdPaciente))]
+        [Required]
+        public int IdPaciente { get; set; }        
         public Paciente Paciente { get; set; }
 
         // 🔹 Relación con Doctor
         [Column("iddoctor")]
+        [Required]
         public int IdDoctor { get; set; }
-
-        [ForeignKey(nameof(IdDoctor))]
         public Doctor Doctor { get; set; }
 
 

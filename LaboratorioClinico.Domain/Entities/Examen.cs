@@ -32,7 +32,7 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("idpaciente")]
         public int IdPaciente { get; set; }
 
-        [ForeignKey(nameof(IdPaciente))]
+        
         public Paciente Paciente { get; set; }
 
         // Relación con Cita (N:1)
@@ -40,7 +40,7 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("idcita")]
         public int IdCita { get; set; }
 
-        [ForeignKey(nameof(IdCita))]
+        
         public Cita Cita { get; set; }
 
         [Required]
