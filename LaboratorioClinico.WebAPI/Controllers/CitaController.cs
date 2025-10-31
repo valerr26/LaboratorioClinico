@@ -54,7 +54,7 @@ namespace LaboratorioClinico.WebAPI.Controllers
 
         // POST api/<CitaController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Cita  cita)
+        public async Task<IActionResult> Post(Cita  cita)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

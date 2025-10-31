@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace LaboratorioClinico.Domain.Entities
 {
@@ -41,18 +42,21 @@ namespace LaboratorioClinico.Domain.Entities
 
         // Relación con Usuario
         [Required]
+        [ForeignKey("Usuario")]
         [Column("idusuario")]
         public int IdUsuario { get; set; }
 
-        
-        public Usuario Usuario { get; set; }
-
-        // Relación con Citas (1 doctor -> muchas citas)
-        public ICollection<Cita> Citas { get; set; }
+        [JsonIgnore]
+        public Usuario? Usuario { get; set; }
 
         [Required]
         [Column("estado")]
         public bool Estado { get; set; }
+
+        // Relación con Citas (1 doctor -> muchas citas)
+        
+        public ICollection<Cita>? Citas { get; set; }
+       
 
         // ✅ MÉTODOS PARA LÓGICA Y PRUEBAS UNITARIAS
 

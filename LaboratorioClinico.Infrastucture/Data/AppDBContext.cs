@@ -34,27 +34,77 @@ namespace LaboratorioClinico.Infrastructure.Data
 
             base.OnModelCreating(modelBuilder);
 
-            // Relaciones
+            // 🔹 Relaciones
+
+            // Usuario ↔ Rol (N:1)
             modelBuilder.Entity<Usuario>()
                 .HasOne(u => u.Rol)
                 .WithMany(r => r.Usuarios)
-                .HasForeignKey(u => u.IdRol);
+                .HasForeignKey(u => u.IdRol)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // Doctor ↔ Usuario (1:1)
+            modelBuilder.Entity<Doctor>()
+                .HasOne(d => d.Usuario)
+                .WithOne()
+                .HasForeignKey<Doctor>(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Paciente ↔ Usuario (N:1)
+            modelBuilder.Entity<Paciente>()
+                .HasOne(p => p.Usuario)
+                .WithMany()
+                .HasForeignKey(p => p.IdUsuario)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Paciente ↔ Doctor (N:1)
+            modelBuilder.Entity<Paciente>()
+                .HasOne(p => p.Doctor)
+                .WithMany()
+                .HasForeignKey(p => p.IdDoctor)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Cita ↔ Paciente (N:1)
             modelBuilder.Entity<Cita>()
                 .HasOne(c => c.Paciente)
                 .WithMany(p => p.Citas)
-                .HasForeignKey(c => c.IdPaciente);
+                .HasForeignKey(c => c.IdPaciente)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // Cita ↔ Doctor (N:1)
             modelBuilder.Entity<Cita>()
                 .HasOne(c => c.Doctor)
                 .WithMany(d => d.Citas)
-                .HasForeignKey(c => c.IdDoctor);
+                .HasForeignKey(c => c.IdDoctor)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            // Examen ↔ Paciente (N:1)
+            modelBuilder.Entity<Examen>()
+                .HasOne(e => e.Paciente)
+                .WithMany(p => p.Examenes)
+                .HasForeignKey(e => e.IdPaciente)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Examen ↔ Cita (N:1)
             modelBuilder.Entity<Examen>()
                 .HasOne(e => e.Cita)
-                .WithMany(c => c.Examenes) 
-                .HasForeignKey(e => e.IdCita);
+                .WithMany(c => c.Examenes)
+                .HasForeignKey(e => e.IdCita)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // Resultado ↔ Examen (N:1)
+            modelBuilder.Entity<Resultado>()
+                .HasOne(r => r.Examen)
+                .WithMany()
+                .HasForeignKey(r => r.IdExamen)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Resultado ↔ Doctor (N:1)
+            modelBuilder.Entity<Resultado>()
+                .HasOne(r => r.Doctor)
+                .WithMany()
+                .HasForeignKey(r => r.IdDoctor)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

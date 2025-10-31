@@ -35,9 +35,16 @@ namespace LaboratorioClinico.Infrastucture.Repositories
 
         public async Task<Doctor> AddDoctorAsync(Doctor doctor)
         {
-            _context.Doctores.Add(doctor);
-            await _context.SaveChangesAsync();
-            return doctor;
+            try
+            {
+                _context.Doctores.Add(doctor);
+                await _context.SaveChangesAsync();
+                return doctor;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<Doctor> UpdateDoctorAsync(Doctor doctor)

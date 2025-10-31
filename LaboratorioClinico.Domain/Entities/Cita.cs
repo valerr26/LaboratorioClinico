@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,16 +33,21 @@ namespace LaboratorioClinico.Domain.Entities
         public string NotasConsulta { get; set; }
 
         // 🔹 Relación con Paciente
+        [ForeignKey("Paciente")]
         [Column("idpaciente")]
         [Required]
-        public int IdPaciente { get; set; }        
-        public Paciente Paciente { get; set; }
+        public int IdPaciente { get; set; }
+       
+        [JsonIgnore]
+        public Paciente? Paciente { get; set; }
 
         // 🔹 Relación con Doctor
+        [ForeignKey("Doctor")]
         [Column("iddoctor")]
         [Required]
         public int IdDoctor { get; set; }
-        public Doctor Doctor { get; set; }
+        [JsonIgnore]
+        public Doctor? Doctor { get; set; }
 
 
         // 🔹 Relación 1:N con Resultados

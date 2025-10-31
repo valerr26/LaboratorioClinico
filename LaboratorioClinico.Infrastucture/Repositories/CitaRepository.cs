@@ -24,9 +24,18 @@ namespace LaboratorioClinico.Infrastucture.Repositories
         // Agregar una nueva cita
         public async Task<Cita> AddCitaAsync(Cita cita)
         {
-            _context.Citas.Add(cita);
-            await _context.SaveChangesAsync();
-            return cita;
+            try
+            {
+                _context.Citas.Add(cita);
+                await _context.SaveChangesAsync();
+                return cita;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
         }
 
         // Obtener una cita por su id
@@ -41,10 +50,8 @@ namespace LaboratorioClinico.Infrastucture.Repositories
         // Obtener todas las citas
         public async Task<IEnumerable<Cita>> GetCitasAsync()
         {
-            return await _context.Citas
-                                 .Include(c => c.Paciente)  // propiedad de navegación
-                                 .Include(c => c.Doctor)    // propiedad de navegación
-                                 .ToListAsync();
+            var lista= await _context.Citas.ToListAsync();
+            return lista;
         }
 
         // Actualizar una cita existente

@@ -41,9 +41,17 @@ namespace LaboratorioClinico.Infrastructure.Repositories
 
         public async Task<Examen> AddExamenAsync(Examen examen)
         {
-            _context.Examenes.Add(examen);
-            await _context.SaveChangesAsync();
-            return examen;
+            try
+            {
+                _context.Examenes.Add(examen);
+                await _context.SaveChangesAsync();
+                return examen;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task<Examen> UpdateExamenAsync(Examen examen)

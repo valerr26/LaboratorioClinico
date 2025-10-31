@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace LaboratorioClinico.Domain.Entities
 {
@@ -43,21 +44,22 @@ namespace LaboratorioClinico.Domain.Entities
             // Relación con Usuario (N:1)
             [Required]
             [Column("idusuario")]
+            [ForeignKey("Usuario")] 
             public int IdUsuario { get; set; }
-
-            
-            public Usuario Usuario { get; set; }
+            [JsonIgnore]
+            public Usuario? Usuario { get; set; }
 
             [Required]
             [Column("estado")]
             public bool Estado { get; set; }
 
-            // 🔹 Relación con Doctor
+             // 🔹 Relación con Doctor
+            [Required]
             [Column("iddoctor")]
+            [ForeignKey("Doctor")]
             public int IdDoctor { get; set; }
-
-            
-            public Doctor Doctor { get; set; }
+            [JsonIgnore]
+            public Doctor? Doctor { get; set; }
 
             // Relación: un paciente puede tener muchas citas
             public ICollection<Cita>? Citas { get; set; }

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace LaboratorioClinico.Domain.Entities
 {
@@ -26,18 +27,18 @@ namespace LaboratorioClinico.Domain.Entities
         // Relación con Examen (N:1)
         [Required]
         [Column("idexamen")]
+        [ForeignKey("Examen")]
         public int IdExamen { get; set; }
-
-       
-        public Examen Examen { get; set; }
+        [JsonIgnore]
+        public Examen? Examen { get; set; }
 
         // Relación con Doctor (N:1)
         [Required]
         [Column("iddoctor")]
+        [ForeignKey("Doctor")]
         public int IdDoctor { get; set; }
-
-        
-        public Doctor Doctor { get; set; }
+        [JsonIgnore]
+        public Doctor? Doctor { get; set; }
 
         [Required]
         [Column("estado")]

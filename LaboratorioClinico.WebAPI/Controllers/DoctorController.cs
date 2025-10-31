@@ -50,7 +50,7 @@ namespace LaboratorioClinico.WebAPI.Controllers
 
         // POST api/<DoctorController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Doctor doctor)
+        public async Task<IActionResult> Post(Doctor doctor)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
