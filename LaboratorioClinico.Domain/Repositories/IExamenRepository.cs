@@ -1,18 +1,15 @@
 ﻿using LaboratorioClinico.Domain.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Domain.Repositories
 {
     public interface IExamenRepository
     {
-        // Obtener todos los examenes
+        // Obtener todos los exámenes
         Task<IEnumerable<Examen>> GetExamenesAsync();
 
-        // Obtener un examen por su id
+        // Obtener un examen por su ID
         Task<Examen> GetExamenByIdAsync(int id);
 
         // Agregar un nuevo examen
@@ -21,7 +18,7 @@ namespace LaboratorioClinico.Domain.Repositories
         // Actualizar un examen existente
         Task<Examen> UpdateExamenAsync(Examen examen);
 
-        // Eliminar un examen por su id
-        Task<bool> DeleteExamenAsync(int id);
+        // ❌ Ya no se debe eliminar físicamente — pero lo dejo por si tu arquitectura lo exige
+        // Task<bool> DeleteExamenAsync(int id);
     }
 }

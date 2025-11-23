@@ -3,7 +3,6 @@ using LaboratorioClinico.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Application.Services
@@ -21,7 +20,7 @@ namespace LaboratorioClinico.Application.Services
         public async Task<IEnumerable<Doctor>> ObtenerDoctoresActivosAsync()
         {
             var doctores = await _repository.GetDoctoresAsync();
-            return doctores.Where(d => d.Estado);
+            return doctores.Where(d => d.Estado == "Activo");
         }
 
         // Obtener doctor por Id (si está activo)
@@ -31,7 +30,7 @@ namespace LaboratorioClinico.Application.Services
                 return null;
 
             var doctor = await _repository.GetDoctorByIdAsync(id);
-            return (doctor != null && doctor.Estado) ? doctor : null;
+            return (doctor != null && doctor.Estado == "Activo") ? doctor : null;
         }
 
         // Agregar doctor
@@ -39,13 +38,16 @@ namespace LaboratorioClinico.Application.Services
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(nuevoDoctor.Nombre) || string.IsNullOrWhiteSpace(nuevoDoctor.Apellido))
+                if (string.IsNullOrWhiteSpace(nuevoDoctor.Nombre) ||
+                    string.IsNullOrWhiteSpace(nuevoDoctor.Apellido))
                     return "Error: El nombre y apellido son obligatorios";
 
                 if (string.IsNullOrWhiteSpace(nuevoDoctor.LicenciaMedica))
                     return "Error: La licencia médica es obligatoria";
 
-                nuevoDoctor.Estado = true; // Activo por defecto
+                // Estado por defecto
+                nuevoDoctor.Estado = "Activo";
+
                 var doctorInsertado = await _repository.AddDoctorAsync(nuevoDoctor);
 
                 if (doctorInsertado == null || doctorInsertado.Id <= 0)
@@ -69,6 +71,11 @@ namespace LaboratorioClinico.Application.Services
             if (existente == null)
                 return "Error: Doctor no encontrado";
 
+            // Validar estado permitido
+            if (!Doctor.EstadosPermitidos.Contains(doctor.Estado))
+                return "Error: Estado no válido";
+
+            // Actualizar datos
             existente.Nombre = doctor.Nombre;
             existente.Apellido = doctor.Apellido;
             existente.Especialidad = doctor.Especialidad;
@@ -80,17 +87,21 @@ namespace LaboratorioClinico.Application.Services
 
             var actualizado = await _repository.UpdateDoctorAsync(existente);
 
-            return actualizado != null ? "Doctor modificado correctamente" : "Error: No se pudo actualizar el doctor";
+            return actualizado != null ? "Doctor modificado correctamente"
+                                       : "Error: No se pudo actualizar el doctor";
         }
 
-        // Eliminar doctor (borrado lógico)
+        // Eliminar doctor (borrado lógico → estado: Inactivo)
         public async Task<string> EliminarDoctorAsync(int id)
         {
             var doctor = await _repository.GetDoctorByIdAsync(id);
-            if (doctor == null || !doctor.Estado)
+            if (doctor == null)
                 return "Error: Doctor no encontrado";
 
-            doctor.Estado = false;
+            if (doctor.Estado != "Activo")
+                return "Error: Solo se pueden eliminar doctores activos";
+
+            doctor.Estado = "Inactivo";
             await _repository.UpdateDoctorAsync(doctor);
 
             return "Doctor eliminado correctamente";

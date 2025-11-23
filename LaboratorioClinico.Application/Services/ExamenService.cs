@@ -3,7 +3,6 @@ using LaboratorioClinico.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Application.Services
@@ -17,21 +16,27 @@ namespace LaboratorioClinico.Application.Services
             _repository = repository;
         }
 
+        // ✔ Mostrar solo los que NO están cancelados
         public async Task<IEnumerable<Examen>> ObtenerExamenesActivosAsync()
         {
             var examenes = await _repository.GetExamenesAsync();
-            return examenes.Where(e => e.Estado);
+            return examenes.Where(e => e.Estado != "Cancelado");
         }
 
+        // ✔ Obtener por ID solo si no está cancelado
         public async Task<Examen?> ObtenerExamenPorIdAsync(int id)
         {
             if (id <= 0)
                 return null;
 
             var examen = await _repository.GetExamenByIdAsync(id);
-            return (examen != null && examen.Estado) ? examen : null;
+
+            return (examen != null && examen.Estado != "Cancelado")
+                ? examen
+                : null;
         }
 
+        // ✔ Nuevo examen inicia en estado Pendiente
         public async Task<string> AgregarExamenAsync(Examen examen)
         {
             if (string.IsNullOrWhiteSpace(examen.TipoExamen))
@@ -40,12 +45,17 @@ namespace LaboratorioClinico.Application.Services
             if (string.IsNullOrWhiteSpace(examen.Descripcion))
                 return "Error: La descripción del examen es obligatoria";
 
-            examen.Estado = true;
+            // Estado por defecto
+            examen.Estado = "Pendiente";
+
             var examenInsertado = await _repository.AddExamenAsync(examen);
 
-            return examenInsertado != null ? "Examen agregado correctamente" : "Error: No se pudo agregar el examen";
+            return examenInsertado != null
+                ? "Examen agregado correctamente"
+                : "Error: No se pudo agregar el examen";
         }
 
+        // ✔ Modificar examen (incluye estado string)
         public async Task<string> ModificarExamenAsync(Examen examen)
         {
             if (examen.Id <= 0)
@@ -59,20 +69,26 @@ namespace LaboratorioClinico.Application.Services
             existente.Descripcion = examen.Descripcion;
             existente.Fecha = examen.Fecha;
             existente.IdPaciente = examen.IdPaciente;
+
+            // 🔥 Estado string
             existente.Estado = examen.Estado;
 
             var actualizado = await _repository.UpdateExamenAsync(existente);
 
-            return actualizado != null ? "Examen modificado correctamente" : "Error: No se pudo modificar el examen";
+            return actualizado != null
+                ? "Examen modificado correctamente"
+                : "Error: No se pudo modificar el examen";
         }
 
+        // ✔ Eliminación lógica usando Estado = "Cancelado"
         public async Task<string> EliminarExamenAsync(int id)
         {
             var examen = await _repository.GetExamenByIdAsync(id);
-            if (examen == null || !examen.Estado)
+
+            if (examen == null || examen.Estado == "Cancelado")
                 return "Error: Examen no encontrado";
 
-            examen.Estado = false;
+            examen.Estado = "Cancelado";
             await _repository.UpdateExamenAsync(examen);
 
             return "Examen eliminado correctamente";

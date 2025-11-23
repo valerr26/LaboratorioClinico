@@ -42,6 +42,9 @@ builder.Services.AddScoped<RolService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<UsuarioService>();
 
+builder.Services.AddScoped<IConsultaRepository, ConsultaRepository>();
+builder.Services.AddScoped<ConsultaService>();
+
 builder.Services.AddScoped<AuthService>();
 
 

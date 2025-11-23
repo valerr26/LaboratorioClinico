@@ -1,10 +1,7 @@
 ﻿using LaboratorioClinico.Application.Services;
 using LaboratorioClinico.Domain.Entities;
-using LaboratorioClinico.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LaboratorioClinico.WebAPI.Controllers
 {
@@ -15,13 +12,12 @@ namespace LaboratorioClinico.WebAPI.Controllers
     {
         private readonly ExamenService _examenService;
 
-
         public ExamenController(ExamenService examenService)
         {
             _examenService = examenService;
         }
 
-        // GET: api/Examen/get
+        // GET: api/examen
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Examen>>> Get()
         {
@@ -29,32 +25,28 @@ namespace LaboratorioClinico.WebAPI.Controllers
             return Ok(examen);
         }
 
-        // GET api/<ExamenController>/5
+        // GET api/examen/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Examen>> GetById(int id)
         {
-            try
-            {
-                var examen = await _examenService.ObtenerExamenPorIdAsync(id);
+            var examen = await _examenService.ObtenerExamenPorIdAsync(id);
 
-                if (examen == null)
-                    return NotFound($"No se encontró un Examen activo con ID {id}");
+            if (examen == null)
+                return NotFound($"No se encontró un Examen activo con ID {id}");
 
-                return Ok(examen);
-            }
-            catch (Exception ex)
-            {
-                //Aquí podrías registrar el error con ILogger
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
-            }
+            return Ok(examen);
         }
 
-        // POST api/<ExamenController>
+        // POST api/examen
         [HttpPost]
-        public async Task<IActionResult> Post(Examen examen)
+        public async Task<IActionResult> Post([FromBody] Examen examen)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            // Ahora Estado es string → asigna "Pendiente" si viene vacío
+            if (string.IsNullOrWhiteSpace(examen.Estado))
+                examen.Estado = "Pendiente";
 
             var resultado = await _examenService.AgregarExamenAsync(examen);
 
@@ -62,38 +54,33 @@ namespace LaboratorioClinico.WebAPI.Controllers
                 return BadRequest(resultado);
 
             return Ok(resultado);
-
         }
 
-        // PUT api/<ExamenController>/5
+        // PUT api/examen/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Examen examen)
         {
-            try
-            {
-                // El servicio valida si el id es válido o no coincide, no lo hacemos aquí
-                examen.Id = id; // nos aseguramos de que use el id de la ruta
+            examen.Id = id; // asegurar que usa el ID de la ruta
 
-                var resultado = await _examenService.ModificarExamenAsync(examen);
+            var resultado = await _examenService.ModificarExamenAsync(examen);
 
-                if (resultado.StartsWith("Error"))
-                    return BadRequest(resultado);
+            if (resultado.StartsWith("Error"))
+                return BadRequest(resultado);
 
-                return Ok(resultado);
-
-
-            }
-            catch (Exception ex)
-            {
-                // Registrar log aquí si tienes ILogger
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
-            }
+            return Ok(resultado);
         }
 
-        // DELETE api/<ExamenController>/5
+        // DELETE api/examen/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            // DELETE ahora hace eliminación lógica: Estado = "Cancelado"
+            var resultado = await _examenService.EliminarExamenAsync(id);
+
+            if (resultado.StartsWith("Error"))
+                return BadRequest(resultado);
+
+            return Ok(resultado);
         }
     }
 }

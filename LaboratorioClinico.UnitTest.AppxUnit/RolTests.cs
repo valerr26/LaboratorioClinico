@@ -1,9 +1,5 @@
 ﻿using LaboratorioClinico.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Xunit;
 
 namespace LaboratorioClinico.UnitTest.AppxUnit
 {
@@ -27,36 +23,36 @@ namespace LaboratorioClinico.UnitTest.AppxUnit
         }
 
         [Fact]
-        public void Activar_DeberiaCambiarEstadoATrue()
+        public void Activar_DeberiaCambiarEstadoAActivo()
         {
             // Arrange
-            var rol = new Rol { Estado = false };
+            var rol = new Rol { Estado = "INACTIVO" };
 
             // Act
             rol.Activar();
 
             // Assert
-            Assert.True(rol.Estado);
+            Assert.Equal("ACTIVO", rol.Estado);
         }
 
         [Fact]
-        public void Desactivar_DeberiaCambiarEstadoAFalse()
+        public void Desactivar_DeberiaCambiarEstadoAInactivo()
         {
             // Arrange
-            var rol = new Rol { Estado = true };
+            var rol = new Rol { Estado = "ACTIVO" };
 
             // Act
             rol.Desactivar();
 
             // Assert
-            Assert.False(rol.Estado);
+            Assert.Equal("INACTIVO", rol.Estado);
         }
 
         [Fact]
         public void EstaActivo_DeberiaRetornarTrueSiRolEstaActivo()
         {
             // Arrange
-            var rol = new Rol { Estado = true };
+            var rol = new Rol { Estado = "ACTIVO" };
 
             // Act
             var resultado = rol.EstaActivo();
@@ -73,7 +69,7 @@ namespace LaboratorioClinico.UnitTest.AppxUnit
             {
                 Nombre = "Recepcionista",
                 Descripcion = "Atiende pacientes y coordina citas",
-                Estado = false
+                Estado = "INACTIVO"
             };
 
             // Act

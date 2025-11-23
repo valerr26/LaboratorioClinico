@@ -1,11 +1,7 @@
 ﻿using LaboratorioClinico.Application.Services;
 using LaboratorioClinico.Domain.Entities;
-using LaboratorioClinico.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LaboratorioClinico.WebAPI.Controllers
 {
@@ -16,85 +12,73 @@ namespace LaboratorioClinico.WebAPI.Controllers
     {
         private readonly RolService _rolService;
 
-
         public RolController(RolService rolService)
         {
             _rolService = rolService;
         }
 
-        // GET: api/RolController/get
+        // GET api/rol
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Rol>>> Get()
         {
-            var rol = await _rolService.ObtenerRolesActivosAsync();
+            var roles = await _rolService.ObtenerRolesActivosAsync();
+            return Ok(roles);
+        }
+
+        // GET api/rol/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Rol>> GetById(int id)
+        {
+            var rol = await _rolService.ObtenerRolPorIdAsync(id);
+
+            if (rol == null)
+                return NotFound($"No se encontró un Rol ACTIVO con ID {id}");
+
             return Ok(rol);
         }
 
-        // GET api/<RolController>/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Paciente>> GetById(int id)
-        {
-            try
-            {
-                var rol = await _rolService.ObtenerRolPorIdAsync(id);
-
-                if (rol == null)
-                    return NotFound($"No se encontró un Rol activo con ID {id}");
-
-                return Ok(rol);
-            }
-            catch (Exception ex)
-            {
-                //Aquí podrías registrar el error con ILogger
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
-            }
-        }
-
-        // POST api/<RolController>
+        // POST api/rol
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Rol rol)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Siempre crear el rol como ACTIVO
+            rol.Estado = "ACTIVO";
+
             var resultado = await _rolService.AgregarRolAsync(rol);
 
             if (resultado.StartsWith("Error"))
                 return BadRequest(resultado);
 
-            return Ok(resultado);
-
+            return Ok("Rol agregado correctamente");
         }
 
-        // PUT api/<RolController>/5
+        // PUT api/rol/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Rol rol )
+        public async Task<IActionResult> Put(int id, [FromBody] Rol rol)
         {
-            try
-            {
-                // El servicio valida si el id es válido o no coincide, no lo hacemos aquí
-                rol.Id = id; // nos aseguramos de que use el id de la ruta
+            rol.Id = id; // Asegurar que se usa el ID de la ruta
 
-                var resultado = await _rolService.ModificarRolAsync(rol);
+            var resultado = await _rolService.ModificarRolAsync(rol);
 
-                if (resultado.StartsWith("Error"))
-                    return BadRequest(resultado);
+            if (resultado.StartsWith("Error"))
+                return BadRequest(resultado);
 
-                return Ok(resultado);
-
-
-            }
-            catch (Exception ex)
-            {
-                // Registrar log aquí si tienes ILogger
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
-            }
+            return Ok("Rol modificado correctamente");
         }
 
-        // DELETE api/<RolController>/5
+        // DELETE api/rol/5  → Borrado lógico
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var resultado = await _rolService.EliminarRolAsync(id);
+
+            if (resultado.StartsWith("Error"))
+                return BadRequest(resultado);
+
+            return Ok("Rol desactivado correctamente");
         }
     }
 }

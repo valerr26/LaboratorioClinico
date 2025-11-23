@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using LaboratorioClinico.Domain.Entities;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Reflection.Emit;
-using Microsoft.Win32;
 
 namespace LaboratorioClinico.Infrastructure.Data
 {
@@ -14,6 +10,7 @@ namespace LaboratorioClinico.Infrastructure.Data
         {
         }
 
+        // 🔹 Tablas
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Paciente> Pacientes { get; set; }
@@ -21,9 +18,11 @@ namespace LaboratorioClinico.Infrastructure.Data
         public DbSet<Cita> Citas { get; set; }
         public DbSet<Examen> Examenes { get; set; }
         public DbSet<Resultado> Resultados { get; set; }
+        public DbSet<Consulta> Consultas { get; set; }   // 👈 AGREGADO
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // 🔹 Mapeo de tablas
             modelBuilder.Entity<Usuario>().ToTable("t_usuario");
             modelBuilder.Entity<Rol>().ToTable("t_rol");
             modelBuilder.Entity<Paciente>().ToTable("t_paciente");
@@ -31,6 +30,7 @@ namespace LaboratorioClinico.Infrastructure.Data
             modelBuilder.Entity<Cita>().ToTable("t_cita");
             modelBuilder.Entity<Examen>().ToTable("t_examen");
             modelBuilder.Entity<Resultado>().ToTable("t_resultado");
+            modelBuilder.Entity<Consulta>().ToTable("t_consulta"); // 👈 AGREGADO
 
             base.OnModelCreating(modelBuilder);
 
@@ -106,7 +106,21 @@ namespace LaboratorioClinico.Infrastructure.Data
                 .HasForeignKey(r => r.IdDoctor)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // 🔥 CONSULTA (NUEVO)
+
+            // Consulta ↔ Paciente (N:1)
+            modelBuilder.Entity<Consulta>()
+                .HasOne(c => c.Paciente)
+                .WithMany(p => p.Consultas)
+                .HasForeignKey(c => c.IdPaciente)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Consulta ↔ Doctor (N:1)
+            modelBuilder.Entity<Consulta>()
+                .HasOne(c => c.Doctor)
+                .WithMany(d => d.Consultas)
+                .HasForeignKey(c => c.IdDoctor)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
-

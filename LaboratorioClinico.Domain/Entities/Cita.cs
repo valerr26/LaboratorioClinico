@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Domain.Entities
 {
@@ -16,84 +13,84 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("idcita")]
         public int Id { get; set; }
 
+        // ----------- NUEVO: Tipo de cita -----------
+        [Required]
+        [Column("tipocita")]
+        [StringLength(20)]
+        public string TipoCita { get; set; } = "EXAMEN";
+        // Valores: EXAMEN | CONSULTA
+
+        // ----------- Fecha y hora -----------
         [Required]
         [Column("fechahora")]
         public DateTime FechaHora { get; set; }
 
+        // ----------- Motivo -----------
         [Required, StringLength(200)]
         [Column("motivo")]
         public string Motivo { get; set; }
 
+        // ----------- NUEVO: Estado como texto -----------
         [Required]
         [Column("estado")]
-        public bool Estado { get; set; }
+        [StringLength(20)]
+        public string Estado { get; set; } = "Activo";
+        // Valores sugeridos: Activo, Cancelado, Pendiente
 
         [StringLength(300)]
         [Column("notasconsulta")]
         public string NotasConsulta { get; set; }
 
-        // 🔹 Relación con Paciente
+        // ----------- Relación con Paciente -----------
         [ForeignKey("Paciente")]
         [Column("idpaciente")]
         [Required]
         public int IdPaciente { get; set; }
-       
+
         [JsonIgnore]
         public Paciente? Paciente { get; set; }
 
-        // 🔹 Relación con Doctor
+        // ----------- Relación con Doctor -----------
+        // AHORA ES OPCIONAL (solo requerido en CONSULTA)
         [ForeignKey("Doctor")]
         [Column("iddoctor")]
-        [Required]
-        public int IdDoctor { get; set; }
+        public int? IdDoctor { get; set; }
+
         [JsonIgnore]
         public Doctor? Doctor { get; set; }
 
-
-        // 🔹 Relación 1:N con Resultados
+        // ----------- Relación con Exámenes -----------
         public ICollection<Examen>? Examenes { get; set; }
 
-        // ✅ MÉTODOS PARA PRUEBAS UNITARIAS Y LÓGICA DE DOMINIO
 
-        /// <summary>
-        /// Retorna true si la cita está activa.
-        /// </summary>
-        public bool EstaActiva()
-        {
-            return Estado;
-        }
 
-        /// <summary>
-        /// Cancela la cita (cambia estado a false).
-        /// </summary>
-        public void Cancelar()
-        {
-            Estado = false;
-        }
+        // -------------------- MÉTODOS DE DOMINIO --------------------
 
-        /// <summary>
-        /// Reactiva una cita previamente cancelada.
-        /// </summary>
-        public void Reactivar()
-        {
-            Estado = true;
-        }
+        public bool EstaActiva() => Estado == "Activo";
 
-        /// <summary>
-        /// Verifica si la cita es futura (fecha mayor a la actual).
-        /// </summary>
-        public bool EsCitaFutura()
-        {
-            return FechaHora > DateTime.Now;
-        }
+        public void Cancelar() => Estado = "Cancelado";
 
-        /// <summary>
-        /// Obtiene un resumen legible de la cita.
-        /// </summary>
+        public void Reactivar() => Estado = "Activo";
+
+        public bool EsCitaFutura() => FechaHora > DateTime.Now;
+
         public string ObtenerResumen()
         {
-            string estadoTexto = Estado ? "Activa" : "Cancelada";
-            return $"Cita #{Id}: {Motivo} - {FechaHora:dd/MM/yyyy HH:mm} ({estadoTexto})";
+            return $"Cita #{Id}: {Motivo} - {FechaHora:dd/MM/yyyy HH:mm} ({Estado}) [{TipoCita}]";
+        }
+
+        // -------------------- REGLA DE LÓGICA AUTOMÁTICA --------------------
+
+        /// <summary>
+        /// Valida reglas segun tipo de cita.
+        /// </summary>
+        public void Validar()
+        {
+            if (TipoCita == "CONSULTA" && IdDoctor == null)
+                throw new Exception("Debe seleccionar un doctor para una consulta.");
+
+            if (TipoCita == "EXAMEN")
+                IdDoctor = null; // Nunca debe tener doctor
         }
     }
 }

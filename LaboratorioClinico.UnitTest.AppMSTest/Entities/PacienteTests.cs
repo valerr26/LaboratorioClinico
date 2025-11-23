@@ -1,14 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LaboratorioClinico.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Domain.Entities.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class PacienteTests
     {
         [TestMethod]
@@ -19,19 +15,21 @@ namespace LaboratorioClinico.Domain.Entities.Tests
         }
 
         [TestMethod]
-        public void Activar_DeberiaCambiarEstadoATrue()
+        public void CambiarEstado_DeberiaCambiarEstadoAActivo()
         {
-            var paciente = new Paciente { Estado = false };
-            paciente.Activar();
-            Assert.IsTrue(paciente.Estado);
+            var paciente = new Paciente { Estado = "Inactivo" };
+            var resultado = paciente.CambiarEstado("Activo");
+            Assert.IsTrue(resultado);
+            Assert.AreEqual("Activo", paciente.Estado);
         }
 
         [TestMethod]
-        public void Desactivar_DeberiaCambiarEstadoAFalse()
+        public void CambiarEstado_DeberiaFallarSiEstadoNoPermitido()
         {
-            var paciente = new Paciente { Estado = true };
-            paciente.Desactivar();
-            Assert.IsFalse(paciente.Estado);
+            var paciente = new Paciente { Estado = "Activo" };
+            var resultado = paciente.CambiarEstado("Desconocido");
+            Assert.IsFalse(resultado);
+            Assert.AreEqual("Activo", paciente.Estado);
         }
 
         [TestMethod]
@@ -56,10 +54,15 @@ namespace LaboratorioClinico.Domain.Entities.Tests
                 Nombre = "Ana",
                 Apellido = "Gómez",
                 FechaNacimiento = new DateTime(2005, 5, 20),
-                Estado = true
+                Estado = "Activo"
             };
+
             var resumen = paciente.ObtenerResumen();
-            Assert.AreEqual("Paciente: Ana Gómez (Activo) - Nacido el 2005/02/05", resumen);
+
+            Assert.AreEqual(
+                "Paciente: Ana Gómez | Estado: Activo | Nacido el 20/05/2005",
+                resumen
+            );
         }
     }
 }

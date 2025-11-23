@@ -3,7 +3,6 @@ using LaboratorioClinico.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Application.Services
@@ -17,38 +16,45 @@ namespace LaboratorioClinico.Application.Services
             _repository = repository;
         }
 
-        // Obtener resultados activos
+        // ✔ Obtener solo resultados activos (que NO estén Anulados)
         public async Task<IEnumerable<Resultado>> ObtenerResultadosActivosAsync()
         {
             var resultados = await _repository.GetResultadosAsync();
-            return resultados.Where(r => r.Estado);
+            return resultados.Where(r => r.Estado != "Anulado");
         }
 
-        // Obtener resultado por Id (si está activo)
+        // ✔ Obtener resultado por ID si no está Anulado
         public async Task<Resultado?> ObtenerResultadoPorIdAsync(int id)
         {
             if (id <= 0)
                 return null;
 
             var resultado = await _repository.GetResultadoByIdAsync(id);
-            return (resultado != null && resultado.Estado) ? resultado : null;
+
+            return (resultado != null && resultado.Estado != "Anulado")
+                ? resultado
+                : null;
         }
 
-        // Agregar resultado
-        public async Task<string> AgregarResultadoAsync(Resultado nuevoResultado)
+        // ✔ Agregar resultado (Estado por defecto = "Validado")
+        public async Task<string> AgregarResultadoAsync(Resultado resultado)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(nuevoResultado.Detalle))
+                if (string.IsNullOrWhiteSpace(resultado.Detalle))
                     return "Error: El detalle del resultado es obligatorio";
 
-                nuevoResultado.Estado = true; // Activo por defecto
-                var resultadoInsertado = await _repository.AddResultadoAsync(nuevoResultado);
+               if (resultado.IdPaciente <= 0)
+                   return "Error: El paciente es obligatorio";
 
-                if (resultadoInsertado == null || resultadoInsertado.Id <= 0)
-                    return "Error: No se pudo agregar el resultado";
+                // Estado inicial
+                resultado.Estado = "Validado"; // o "Entregado"
 
-                return "Resultado agregado correctamente";
+                var insertado = await _repository.AddResultadoAsync(resultado);
+
+                return insertado != null
+                    ? "Resultado agregado correctamente"
+                    : "Error: No se pudo agregar el resultado";
             }
             catch (Exception ex)
             {
@@ -56,7 +62,7 @@ namespace LaboratorioClinico.Application.Services
             }
         }
 
-        // Modificar resultado
+        // ✔ Modificar resultado (incluye estado e IdPaciente)
         public async Task<string> ModificarResultadoAsync(Resultado resultado)
         {
             if (resultado.Id <= 0)
@@ -70,21 +76,27 @@ namespace LaboratorioClinico.Application.Services
             existente.FechaEmision = resultado.FechaEmision;
             existente.IdExamen = resultado.IdExamen;
             existente.IdDoctor = resultado.IdDoctor;
+            existente.IdPaciente = resultado.IdPaciente;
+
+            // Estado string (Validado / Entregado / Anulado)
             existente.Estado = resultado.Estado;
 
             var actualizado = await _repository.UpdateResultadoAsync(existente);
 
-            return actualizado != null ? "Resultado modificado correctamente" : "Error: No se pudo actualizar el resultado";
+            return actualizado != null
+                ? "Resultado modificado correctamente"
+                : "Error: No se pudo actualizar el resultado";
         }
 
-        // Eliminar resultado (borrado lógico)
+        // ✔ Eliminación lógica usando Estado = "Anulado"
         public async Task<string> EliminarResultadoAsync(int id)
         {
             var resultado = await _repository.GetResultadoByIdAsync(id);
-            if (resultado == null || !resultado.Estado)
+
+            if (resultado == null || resultado.Estado == "Anulado")
                 return "Error: Resultado no encontrado";
 
-            resultado.Estado = false;
+            resultado.Estado = "Anulado"; 
             await _repository.UpdateResultadoAsync(resultado);
 
             return "Resultado eliminado correctamente";

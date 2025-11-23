@@ -40,7 +40,6 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("licenciamedica")]
         public string LicenciaMedica { get; set; }
 
-        // Relación con Usuario
         [Required]
         [ForeignKey("Usuario")]
         [Column("idusuario")]
@@ -49,64 +48,58 @@ namespace LaboratorioClinico.Domain.Entities
         [JsonIgnore]
         public Usuario? Usuario { get; set; }
 
+        // Estado STRING validado
         [Required]
+        [StringLength(30)]
         [Column("estado")]
-        public bool Estado { get; set; }
+        public string Estado { get; set; } = "Activo";
 
-        // Relación con Citas (1 doctor -> muchas citas)
-        
+        // Relaciones
         public ICollection<Cita>? Citas { get; set; }
-       
+        public ICollection<Consulta>? Consultas { get; set; }
 
-        // ✅ MÉTODOS PARA LÓGICA Y PRUEBAS UNITARIAS
+        // --------------------- LISTA DE ESTADOS PERMITIDOS ---------------------
+        public static readonly string[] EstadosPermitidos =
+        {
+            "Activo",
+            "Inactivo",
+            "De vacaciones",
+            "Suspendido",
+            "Fuera de horario"
+        };
 
-        /// <summary>
-        /// Devuelve el nombre completo del doctor.
-        /// </summary>
+        // ----------------------------- MÉTODOS --------------------------------
+
         public string ObtenerNombreCompleto()
         {
             return $"{Nombre} {Apellido}";
         }
 
         /// <summary>
-        /// Activa el doctor (cambia Estado a true).
+        /// Cambia el estado del doctor a uno de los estados permitidos.
         /// </summary>
-        public void Activar()
+        public bool CambiarEstado(string nuevoEstado)
         {
-            Estado = true;
+            if (!EstadosPermitidos.Contains(nuevoEstado))
+                return false; // Estado inválido
+
+            Estado = nuevoEstado;
+            return true;
         }
 
-        /// <summary>
-        /// Desactiva el doctor (cambia Estado a false).
-        /// </summary>
-        public void Desactivar()
+        public bool PuedeAtender()
         {
-            Estado = false;
+            return Estado == "Activo" && TieneLicenciaValida();
         }
 
-        /// <summary>
-        /// Verifica si la licencia médica es válida (no nula ni vacía).
-        /// </summary>
         public bool TieneLicenciaValida()
         {
             return !string.IsNullOrWhiteSpace(LicenciaMedica);
         }
 
-        /// <summary>
-        /// Determina si el doctor puede atender (activo y con licencia).
-        /// </summary>
-        public bool PuedeAtender()
-        {
-            return Estado && TieneLicenciaValida();
-        }
-
-        /// <summary>
-        /// Devuelve un resumen legible de la información del doctor.
-        /// </summary>
         public string ObtenerResumen()
         {
-            string estadoTexto = Estado ? "Activo" : "Inactivo";
-            return $"Dr. {Nombre} {Apellido} - {Especialidad} ({estadoTexto}) | Licencia: {LicenciaMedica}";
+            return $"Dr. {Nombre} {Apellido} - {Especialidad} | Estado: {Estado} | Licencia: {LicenciaMedica}";
         }
     }
 }

@@ -19,7 +19,7 @@ namespace LaboratorioClinico.WebAPI.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] Usuario usuario)
+        public async Task<IActionResult> Register(Usuario usuario)
         {
             var (ok, msg) = await _authService.RegisterAsync(usuario.Username, usuario.Password!, usuario.IdRol);
             if (!ok) return BadRequest(new { message = msg });
@@ -29,7 +29,7 @@ namespace LaboratorioClinico.WebAPI.Controllers
         // 🔐 Login con username
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] Usuario usuario)
+        public async Task<IActionResult> Login(Usuario usuario)
         {
             if (string.IsNullOrWhiteSpace(usuario.Username) || string.IsNullOrWhiteSpace(usuario.Password))
                 return BadRequest(new { message = "Debe ingresar nombre de usuario y contraseña." });

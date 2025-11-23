@@ -1,11 +1,7 @@
 ﻿using LaboratorioClinico.Application.Services;
 using LaboratorioClinico.Domain.Entities;
-using LaboratorioClinico.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LaboratorioClinico.WebAPI.Controllers
 {
@@ -16,21 +12,20 @@ namespace LaboratorioClinico.WebAPI.Controllers
     {
         private readonly ResultadoService _resultadoService;
 
-
         public ResultadoController(ResultadoService resultadoService)
         {
             _resultadoService = resultadoService;
         }
 
-        // GET: api/ResultadoController/get
+        // GET: api/resultado
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Paciente>>> Get()
+        public async Task<ActionResult<IEnumerable<Resultado>>> Get()
         {
             var resultado = await _resultadoService.ObtenerResultadosActivosAsync();
             return Ok(resultado);
         }
 
-        // GET api/<ResultadoController>/5
+        // GET api/resultado/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Resultado>> GetById(int id)
         {
@@ -45,56 +40,57 @@ namespace LaboratorioClinico.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                //Aquí podrías registrar el error con ILogger
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
 
-        // POST api/<ResultadoController>
+        // POST api/resultado
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Resultado resultado)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var resultados = await _resultadoService.AgregarResultadoAsync(resultado);
+            var mensaje = await _resultadoService.AgregarResultadoAsync(resultado);
 
-            if (resultados.StartsWith("Error"))
-                return BadRequest(resultados);
+            if (mensaje.StartsWith("Error"))
+                return BadRequest(mensaje);
 
-            return Ok(resultados);
-
+            return Ok(mensaje);
         }
 
-        // PUT api/<ResultadoController>/5
+        // PUT api/resultado/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Resultado resultado)
         {
             try
             {
-                // El servicio valida si el id es válido o no coincide, no lo hacemos aquí
-                resultado.Id = id; // nos aseguramos de que use el id de la ruta
+                // nos aseguramos de que use el ID de la ruta
+                resultado.Id = id;
 
-                var resultados = await _resultadoService.ModificarResultadoAsync(resultado);
+                var mensaje = await _resultadoService.ModificarResultadoAsync(resultado);
 
-                if (resultados.StartsWith("Error"))
-                    return BadRequest(resultados);
+                if (mensaje.StartsWith("Error"))
+                    return BadRequest(mensaje);
 
-                return Ok(resultados);
-
-
+                return Ok(mensaje);
             }
             catch (Exception ex)
             {
-                // Registrar log aquí si tienes ILogger
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
 
-        // DELETE api/<ResultadoController>/5
+        // DELETE api/resultado/5  (Eliminación lógica)
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var mensaje = await _resultadoService.EliminarResultadoAsync(id);
+
+            if (mensaje.StartsWith("Error"))
+                return BadRequest(mensaje);
+
+            return Ok(mensaje);
         }
     }
 }

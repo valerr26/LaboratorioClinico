@@ -1,10 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LaboratorioClinico.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Domain.Entities.Tests
 {
@@ -12,26 +8,26 @@ namespace LaboratorioClinico.Domain.Entities.Tests
     public class CitaTests
     {
         [TestMethod]
-        public void EstaActiva_DeberiaRetornarTrueSiEstadoEsTrue()
+        public void EstaActiva_DeberiaRetornarTrueSiEstadoEsActivo()
         {
-            var cita = new Cita { Estado = true };
+            var cita = new Cita { Estado = "ACTIVO" };
             Assert.IsTrue(cita.EstaActiva());
         }
 
         [TestMethod]
-        public void Cancelar_DeberiaCambiarEstadoAFalse()
+        public void Cancelar_DeberiaCambiarEstadoAInactivo()
         {
-            var cita = new Cita { Estado = true };
+            var cita = new Cita { Estado = "ACTIVO" };
             cita.Cancelar();
-            Assert.IsFalse(cita.Estado);
+            Assert.AreEqual("INACTIVO", cita.Estado);
         }
 
         [TestMethod]
-        public void Reactivar_DeberiaCambiarEstadoATrue()
+        public void Reactivar_DeberiaCambiarEstadoAActivo()
         {
-            var cita = new Cita { Estado = false };
+            var cita = new Cita { Estado = "INACTIVO" };
             cita.Reactivar();
-            Assert.IsTrue(cita.Estado);
+            Assert.AreEqual("ACTIVO", cita.Estado);
         }
 
         [TestMethod]
@@ -56,9 +52,11 @@ namespace LaboratorioClinico.Domain.Entities.Tests
                 Id = 1,
                 Motivo = "Consulta general",
                 FechaHora = new DateTime(2025, 10, 10, 9, 30, 0),
-                Estado = true
+                Estado = "ACTIVO"
             };
+
             var resumen = cita.ObtenerResumen();
+
             Assert.AreEqual("Cita #1: Consulta general - 10/10/2025 09:30 (Activa)", resumen);
         }
     }

@@ -21,7 +21,7 @@ namespace LaboratorioClinico.Application.Services
         public async Task<IEnumerable<Paciente>> ObtenerPacientesActivosAsync()
         {
             var pacientes = await _repository.GetPacientesAsync();
-            return pacientes.Where(p => p.Estado);
+            return pacientes.Where(p => p.Estado == "Activo");
         }
 
         // Obtener paciente por Id (si está activo)
@@ -31,7 +31,7 @@ namespace LaboratorioClinico.Application.Services
                 return null;
 
             var paciente = await _repository.GetPacienteByIdAsync(id);
-            return (paciente != null && paciente.Estado) ? paciente : null;
+            return (paciente != null && paciente.Estado == "Activo") ? paciente : null;
         }
 
         // Agregar paciente
@@ -45,7 +45,8 @@ namespace LaboratorioClinico.Application.Services
                 if (string.IsNullOrWhiteSpace(nuevoPaciente.Direccion))
                     return "Error: La dirección es obligatoria";
 
-                nuevoPaciente.Estado = true; // Activo por defecto
+                // Estado por defecto
+                nuevoPaciente.Estado = "Activo";
                 var pacienteInsertado = await _repository.AddPacienteAsync(nuevoPaciente);
 
                 if (pacienteInsertado == null || pacienteInsertado.Id <= 0)
@@ -76,7 +77,12 @@ namespace LaboratorioClinico.Application.Services
             existente.Email = paciente.Email;
             existente.FechaNacimiento = paciente.FechaNacimiento;
             existente.IdUsuario = paciente.IdUsuario;
-            existente.Estado = paciente.Estado;
+
+            // Cambiar estado solo si es válido
+            if (!string.IsNullOrWhiteSpace(paciente.Estado))
+            {
+                existente.CambiarEstado(paciente.Estado);
+            }
 
             var actualizado = await _repository.UpdatePacienteAsync(existente);
 
@@ -87,10 +93,10 @@ namespace LaboratorioClinico.Application.Services
         public async Task<string> EliminarPacienteAsync(int id)
         {
             var paciente = await _repository.GetPacienteByIdAsync(id);
-            if (paciente == null || !paciente.Estado)
+            if (paciente == null || paciente.Estado != "Activo")
                 return "Error: Paciente no encontrado";
 
-            paciente.Estado = false;
+            paciente.CambiarEstado("Inactivo");
             await _repository.UpdatePacienteAsync(paciente);
 
             return "Paciente eliminado correctamente";

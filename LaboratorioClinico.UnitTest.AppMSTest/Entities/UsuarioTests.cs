@@ -1,10 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LaboratorioClinico.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Domain.Entities.Tests
 {
@@ -12,25 +7,25 @@ namespace LaboratorioClinico.Domain.Entities.Tests
     public class UsuarioTests
     {
         [TestMethod]
-        public void Activar_DeberiaCambiarEstadoATrue()
+        public void Activar_DeberiaCambiarEstadoAActivo()
         {
-            var usuario = new Usuario { Estado = false };
+            var usuario = new Usuario { Estado = "Inactivo" };
             usuario.Activar();
-            Assert.IsTrue(usuario.Estado);
+            Assert.AreEqual("Activo", usuario.Estado);
         }
 
         [TestMethod]
-        public void Desactivar_DeberiaCambiarEstadoAFalse()
+        public void Inactivar_DeberiaCambiarEstadoAInactivo()
         {
-            var usuario = new Usuario { Estado = true };
-            usuario.Desactivar();
-            Assert.IsFalse(usuario.Estado);
+            var usuario = new Usuario { Estado = "Activo" };
+            usuario.Inactivar();
+            Assert.AreEqual("Inactivo", usuario.Estado);
         }
 
         [TestMethod]
-        public void EstaActivo_DeberiaRetornarTrueSiEstadoEsTrue()
+        public void EstaActivo_DeberiaRetornarTrueSiEstadoEsActivo()
         {
-            var usuario = new Usuario { Estado = true };
+            var usuario = new Usuario { Estado = "Activo" };
             Assert.IsTrue(usuario.EstaActivo());
         }
 
@@ -38,13 +33,16 @@ namespace LaboratorioClinico.Domain.Entities.Tests
         public void ObtenerResumen_DeberiaIncluirUsernameYRol()
         {
             var rol = new Rol { Nombre = "Administrador" };
+
             var usuario = new Usuario
             {
                 Username = "jmartinez",
-                Estado = true,
+                Estado = "Activo",
                 Rol = rol
             };
+
             var resumen = usuario.ObtenerResumen();
+
             Assert.AreEqual("Usuario: jmartinez (Activo) | Rol: Administrador", resumen);
         }
     }

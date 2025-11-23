@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace LaboratorioClinico.Domain.Entities
@@ -24,67 +20,52 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("fechaemision")]
         public DateTime FechaEmision { get; set; }
 
-        // Relación con Examen (N:1)
+        // -------- PACIENTE --------
+        [Required]
+        [Column("idpaciente")]
+        public int IdPaciente { get; set; }
+
+        [JsonIgnore]
+        public Paciente? Paciente { get; set; }
+
+
+        // -------- EXAMEN --------
         [Required]
         [Column("idexamen")]
-        [ForeignKey("Examen")]
         public int IdExamen { get; set; }
+
         [JsonIgnore]
         public Examen? Examen { get; set; }
 
-        // Relación con Doctor (N:1)
+
+        // -------- DOCTOR --------
         [Required]
         [Column("iddoctor")]
-        [ForeignKey("Doctor")]
         public int IdDoctor { get; set; }
+
         [JsonIgnore]
         public Doctor? Doctor { get; set; }
 
+
+        // -------- ESTADO --------
         [Required]
         [Column("estado")]
-        public bool Estado { get; set; }
+        [StringLength(50)]
+        public string Estado { get; set; } = Validado;
 
-        // ✅ MÉTODOS CON LÓGICA PARA PRUEBAS UNITARIAS
+        public const string Validado = "Validado";
+        public const string Entregado = "Entregado";
+        public const string Anulado = "Anulado";
 
-        /// <summary>
-        /// Activa el resultado.
-        /// </summary>
-        public void Activar()
-        {
-            Estado = true;
-        }
+        public string ObtenerEstado() => Estado;
+        public void Validar() => Estado = Validado;
+        public void Entregar() => Estado = Entregado;
+        public void Anular() => Estado = Anulado;
 
-        /// <summary>
-        /// Desactiva el resultado.
-        /// </summary>
-        public void Desactivar()
-        {
-            Estado = false;
-        }
+        public bool EsReciente() =>
+            FechaEmision >= DateTime.Now.AddDays(-7);
 
-        /// <summary>
-        /// Verifica si el resultado está activo.
-        /// </summary>
-        public bool EstaActivo()
-        {
-            return Estado;
-        }
-
-        /// <summary>
-        /// Determina si el resultado es reciente (emitido en los últimos 7 días).
-        /// </summary>
-        public bool EsReciente()
-        {
-            return FechaEmision >= DateTime.Now.AddDays(-7);
-        }
-
-        /// <summary>
-        /// Obtiene un resumen legible del resultado.
-        /// </summary>
-        public string ObtenerResumen()
-        {
-            string estadoTexto = Estado ? "Activo" : "Inactivo";
-            return $"Resultado #{Id}: {Detalle} - Emitido el {FechaEmision:dd/MM/yyyy} [{estadoTexto}]";
-        }
+        public string ObtenerResumen() =>
+            $"Resultado #{Id}: {Detalle} - Emitido el {FechaEmision:dd/MM/yyyy} [{Estado}]";
     }
 }

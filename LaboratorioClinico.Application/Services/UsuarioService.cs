@@ -1,10 +1,5 @@
 ﻿using LaboratorioClinico.Domain.Entities;
 using LaboratorioClinico.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Application.Services
 {
@@ -21,7 +16,7 @@ namespace LaboratorioClinico.Application.Services
         public async Task<IEnumerable<Usuario>> ObtenerUsuariosActivosAsync()
         {
             var usuarios = await _repository.GetUsuarioAsync();
-            return usuarios.Where(u => u.Estado);
+            return usuarios.Where(u => u.EstaActivo()); // ahora compara string
         }
 
         // Obtener usuario por Id (si está activo)
@@ -31,7 +26,8 @@ namespace LaboratorioClinico.Application.Services
                 return null;
 
             var usuario = await _repository.GetUsuarioByIdAsync(id);
-            return (usuario != null && usuario.Estado) ? usuario : null;
+
+            return (usuario != null && usuario.EstaActivo()) ? usuario : null;
         }
 
         // Agregar usuario
@@ -40,10 +36,13 @@ namespace LaboratorioClinico.Application.Services
             try
             {
                 var usuarios = await _repository.GetUsuarioAsync();
+
                 if (usuarios.Any(u => u.Username.ToLower() == nuevoUsuario.Username.ToLower()))
                     return "Error: Ya existe un usuario con ese username";
 
-                nuevoUsuario.Estado = true; // Activo por defecto
+                // Estado por defecto
+                nuevoUsuario.Activar(); // Estado = "Activo"
+
                 var usuarioInsertado = await _repository.AddUsuarioAsync(nuevoUsuario);
 
                 if (usuarioInsertado == null || usuarioInsertado.Id <= 0)
@@ -68,23 +67,27 @@ namespace LaboratorioClinico.Application.Services
                 return "Error: Usuario no encontrado";
 
             existente.Username = usuario.Username;
-            existente.Password = usuario.Password;
+            existente.PasswordHash = usuario.PasswordHash;
             existente.IdRol = usuario.IdRol;
-            existente.Estado = usuario.Estado;
+            existente.Estado = usuario.Estado; // ahora es string
 
             var actualizado = await _repository.UpdateUsuarioAsync(existente);
 
-            return actualizado != null ? "Usuario modificado correctamente" : "Error: No se pudo actualizar el usuario";
+            return actualizado != null
+                ? "Usuario modificado correctamente"
+                : "Error: No se pudo actualizar el usuario";
         }
 
-        // Eliminar usuario (borrado lógico)
+        // Eliminar usuario (cambia a INACTIVO)
         public async Task<string> EliminarUsuarioAsync(int id)
         {
             var usuario = await _repository.GetUsuarioByIdAsync(id);
-            if (usuario == null || !usuario.Estado)
+
+            if (usuario == null || !usuario.EstaActivo())
                 return "Error: Usuario no encontrado";
 
-            usuario.Estado = false;
+            usuario.Inactivar(); // Estado = "Inactivo"
+
             await _repository.UpdateUsuarioAsync(usuario);
 
             return "Usuario eliminado correctamente";

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace LaboratorioClinico.Domain.Entities
@@ -12,6 +8,13 @@ namespace LaboratorioClinico.Domain.Entities
     [Table("t_examen")]
     public class Examen
     {
+        // --- ESTADOS PERMITIDOS ---
+        public const string Pendiente = "Pendiente";
+        public const string EnProceso = "En proceso";
+        public const string Completado = "Completado";
+        public const string Entregado = "Entregado";
+        public const string Cancelado = "Cancelado";
+
         [Key]
         [Column("idexamen")]
         public int Id { get; set; }
@@ -28,67 +31,34 @@ namespace LaboratorioClinico.Domain.Entities
         [Column("descripcion")]
         public string Descripcion { get; set; }
 
-        // Relación con Paciente (N:1)
         [Required]
         [Column("idpaciente")]
-        [ForeignKey("Paciente")]
         public int IdPaciente { get; set; }
         [JsonIgnore]
         public Paciente? Paciente { get; set; }
 
-        // Relación con Cita (N:1)
         [Required]
         [Column("idcita")]
-        [ForeignKey("Cita")]
         public int IdCita { get; set; }
         [JsonIgnore]
         public Cita? Cita { get; set; }
 
         [Required]
         [Column("estado")]
-        public bool Estado { get; set; }
+        [StringLength(50)]
+        public string Estado { get; set; } = Pendiente;
 
-        // ✅ MÉTODOS PARA PRUEBAS UNITARIAS Y DOMINIO
 
-        /// <summary>
-        /// Verifica si el examen está activo.
-        /// </summary>
-        public bool EstaActivo()
-        {
-            return Estado;
-        }
+        // --- MÉTODOS ---
+        public string ObtenerEstado() => Estado;
 
-        /// <summary>
-        /// Activa el examen.
-        /// </summary>
-        public void Activar()
-        {
-            Estado = true;
-        }
+        public void Activar() => Estado = Pendiente;
 
-        /// <summary>
-        /// Desactiva el examen.
-        /// </summary>
-        public void Desactivar()
-        {
-            Estado = false;
-        }
+        public void Desactivar() => Estado = Cancelado;
 
-        /// <summary>
-        /// Determina si el examen es reciente (realizado en los últimos 7 días).
-        /// </summary>
-        public bool EsReciente()
-        {
-            return Fecha >= DateTime.Now.AddDays(-7);
-        }
+        public bool EsReciente() => Fecha >= DateTime.Now.AddDays(-7);
 
-        /// <summary>
-        /// Obtiene un resumen legible del examen.
-        /// </summary>
         public string ObtenerResumen()
-        {
-            string estadoTexto = Estado ? "Activo" : "Inactivo";
-            return $"Examen #{Id}: {TipoExamen} - {Descripcion} ({Fecha:dd/MM/yyyy}) [{estadoTexto}]";
-        }
+            => $"Examen #{Id}: {TipoExamen} - {Descripcion} ({Fecha:dd/MM/yyyy HH:mm}) [{Estado}]";
     }
 }

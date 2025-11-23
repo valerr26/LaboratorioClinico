@@ -21,7 +21,6 @@ namespace LaboratorioClinico.Domain.Repositories
         // Actualizar un resultado existente
         Task<Resultado> UpdateResultadoAsync(Resultado resultado);
 
-        // Eliminar un resultado por su id
-        Task<bool> DeleteResultadoAsync(int id);
+        
     }
 }

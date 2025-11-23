@@ -1,10 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LaboratorioClinico.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Domain.Entities.Tests
 {
@@ -20,33 +16,40 @@ namespace LaboratorioClinico.Domain.Entities.Tests
         }
 
         [TestMethod]
-        public void Activar_DeberiaCambiarEstadoATrue()
+        public void Activar_DeberiaCambiarEstadoAActivo()
         {
-            var rol = new Rol { Estado = false };
+            var rol = new Rol { Estado = "INACTIVO" };
             rol.Activar();
-            Assert.IsTrue(rol.Estado);
+            Assert.AreEqual("ACTIVO", rol.Estado);
         }
 
         [TestMethod]
-        public void Desactivar_DeberiaCambiarEstadoAFalse()
+        public void Desactivar_DeberiaCambiarEstadoAInactivo()
         {
-            var rol = new Rol { Estado = true };
+            var rol = new Rol { Estado = "ACTIVO" };
             rol.Desactivar();
-            Assert.IsFalse(rol.Estado);
+            Assert.AreEqual("INACTIVO", rol.Estado);
         }
 
         [TestMethod]
         public void EstaActivo_DeberiaRetornarTrueSiElRolEstaActivo()
         {
-            var rol = new Rol { Estado = true };
+            var rol = new Rol { Estado = "ACTIVO" };
             Assert.IsTrue(rol.EstaActivo());
         }
 
         [TestMethod]
         public void ObtenerResumen_DeberiaIncluirNombreYEstado()
         {
-            var rol = new Rol { Nombre = "Recepcionista", Descripcion = "Atiende pacientes", Estado = false };
+            var rol = new Rol
+            {
+                Nombre = "Recepcionista",
+                Descripcion = "Atiende pacientes",
+                Estado = "INACTIVO"
+            };
+
             var resumen = rol.ObtenerResumen();
+
             Assert.AreEqual("Rol: Recepcionista (Inactivo) - Atiende pacientes", resumen);
         }
     }

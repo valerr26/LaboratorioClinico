@@ -1,8 +1,5 @@
 ﻿using LaboratorioClinico.Domain.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Domain.Repositories
@@ -12,8 +9,11 @@ namespace LaboratorioClinico.Domain.Repositories
         // Obtener todas las citas
         Task<IEnumerable<Cita>> GetCitasAsync();
 
-        // Obtener una cita por su id
-        Task<Cita> GetCitaByIdAsync(int id);
+        // Obtener todas las citas activas
+        Task<IEnumerable<Cita>> GetCitasActivasAsync();
+
+        // Obtener una cita por su ID
+        Task<Cita?> GetCitaByIdAsync(int id);
 
         // Agregar una nueva cita
         Task<Cita> AddCitaAsync(Cita cita);
@@ -21,7 +21,19 @@ namespace LaboratorioClinico.Domain.Repositories
         // Actualizar una cita existente
         Task<Cita> UpdateCitaAsync(Cita cita);
 
-        // Eliminar una cita por su id
+        // Eliminar una cita (lógica o física)
         Task<bool> DeleteCitaAsync(int id);
+
+        public interface ICitaRepository
+        {
+            Task<bool> ExisteCitaAsync(int id);
+        }
+
+
+        // ----------- NUEVO: Para disponibilidad de horarios ----------
+        Task<bool> ExisteCitaEnFechaHoraAsync(DateTime fechaHora);
+
+        // Obtener citas por día (para mostrar horas ocupadas)
+        Task<IEnumerable<Cita>> GetCitasPorFechaAsync(DateTime fecha);
     }
 }

@@ -1,10 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LaboratorioClinico.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LaboratorioClinico.Domain.Entities.Tests
 {
@@ -12,26 +8,26 @@ namespace LaboratorioClinico.Domain.Entities.Tests
     public class ExamenTests
     {
         [TestMethod]
-        public void EstaActivo_DeberiaRetornarTrueSiEstadoEsTrue()
+        public void ObtenerEstado_DeberiaRetornarElEstadoActual()
         {
-            var examen = new Examen { Estado = true };
-            Assert.IsTrue(examen.EstaActivo());
+            var examen = new Examen { Estado = Examen.EnProceso };
+            Assert.AreEqual("En proceso", examen.ObtenerEstado());
         }
 
         [TestMethod]
-        public void Activar_DeberiaCambiarEstadoATrue()
+        public void Activar_DeberiaCambiarEstadoAPendiente()
         {
-            var examen = new Examen { Estado = false };
+            var examen = new Examen { Estado = Examen.Cancelado };
             examen.Activar();
-            Assert.IsTrue(examen.Estado);
+            Assert.AreEqual(Examen.Pendiente, examen.Estado);
         }
 
         [TestMethod]
-        public void Desactivar_DeberiaCambiarEstadoAFalse()
+        public void Desactivar_DeberiaCambiarEstadoACancelado()
         {
-            var examen = new Examen { Estado = true };
+            var examen = new Examen { Estado = Examen.Pendiente };
             examen.Desactivar();
-            Assert.IsFalse(examen.Estado);
+            Assert.AreEqual(Examen.Cancelado, examen.Estado);
         }
 
         [TestMethod]
@@ -49,7 +45,7 @@ namespace LaboratorioClinico.Domain.Entities.Tests
         }
 
         [TestMethod]
-        public void ObtenerResumen_DeberiaIncluirTipoDescripcionFechaYEstado()
+        public void ObtenerResumen_DeberiaRetornarTextoCorrecto()
         {
             var examen = new Examen
             {
@@ -57,10 +53,15 @@ namespace LaboratorioClinico.Domain.Entities.Tests
                 TipoExamen = "Orina",
                 Descripcion = "Examen general de orina",
                 Fecha = new DateTime(2025, 10, 8),
-                Estado = true
+                Estado = Examen.Completado
             };
+
             var resumen = examen.ObtenerResumen();
-            Assert.AreEqual("Examen #1: Orina - Examen general de orina (08/10/2025) [Activo]", resumen);
+
+            Assert.AreEqual(
+                "Examen #1: Orina - Examen general de orina (08/10/2025) [Completado]",
+                resumen
+            );
         }
     }
 }

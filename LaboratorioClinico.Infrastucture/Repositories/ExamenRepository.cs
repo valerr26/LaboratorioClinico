@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 
 //Referencias
@@ -25,33 +23,24 @@ namespace LaboratorioClinico.Infrastructure.Repositories
         public async Task<IEnumerable<Examen>> GetExamenesAsync()
         {
             return await _context.Examenes
-                                 .Include(e => e.Paciente)  // 👈 propiedad de navegación
-                                 .Include(e => e.Cita)      // opcional si quieres también la cita
+                                 .Include(e => e.Paciente)
+                                 .Include(e => e.Cita)
                                  .ToListAsync();
         }
 
         public async Task<Examen> GetExamenByIdAsync(int id)
         {
             return await _context.Examenes
-                                 .Include(e => e.Paciente)  // 👈 no el Id, sino la entidad relacionada
+                                 .Include(e => e.Paciente)
                                  .Include(e => e.Cita)
                                  .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-
         public async Task<Examen> AddExamenAsync(Examen examen)
         {
-            try
-            {
-                _context.Examenes.Add(examen);
-                await _context.SaveChangesAsync();
-                return examen;
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
+            _context.Examenes.Add(examen);
+            await _context.SaveChangesAsync();
+            return examen;
         }
 
         public async Task<Examen> UpdateExamenAsync(Examen examen)
@@ -67,12 +56,15 @@ namespace LaboratorioClinico.Infrastructure.Repositories
             existingExamen.Descripcion = examen.Descripcion;
             existingExamen.IdPaciente = examen.IdPaciente;
             existingExamen.IdCita = examen.IdCita;
+
+            // 👉 CAMBIO IMPORTANTE: Estado STRING
             existingExamen.Estado = examen.Estado;
 
             await _context.SaveChangesAsync();
             return existingExamen;
         }
 
+        // ❗AHORA SE HACE ELIMINACIÓN LÓGICA
         public async Task<bool> DeleteExamenAsync(int id)
         {
             var examen = await _context.Examenes.FindAsync(id);
@@ -81,7 +73,9 @@ namespace LaboratorioClinico.Infrastructure.Repositories
                 return false;
             }
 
-            _context.Examenes.Remove(examen);
+            // 👉 NO BORRA — solo actualiza el estado
+            examen.Estado = "Cancelado";
+
             await _context.SaveChangesAsync();
             return true;
         }
