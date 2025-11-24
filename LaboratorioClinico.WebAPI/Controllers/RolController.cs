@@ -18,6 +18,7 @@ namespace LaboratorioClinico.WebAPI.Controllers
         }
 
         // GET api/rol
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Rol>>> Get()
         {
